@@ -10,9 +10,9 @@ PRAGMA FOREIGN_KEYS  = ON;
 
 CREATE TABLE IF NOT EXISTS exchange_rates (
     id INTEGER PRIMARY KEY,
-    base_rate_id INTEGER REFERENCES currencies(id),
-    target_rate_id INTEGER REFERENCES currencies(id),
+    base_currency_id INTEGER REFERENCES currencies(id),
+    target_currency_id INTEGER REFERENCES currencies(id),
     rate REAL,
 
-    UNIQUE(base_rate_id, target_rate_id)
+    UNIQUE(base_currency_id, target_currency_id)
 )
