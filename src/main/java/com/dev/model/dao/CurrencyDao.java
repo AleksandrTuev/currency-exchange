@@ -1,0 +1,104 @@
+package com.dev.model.dao;
+
+import com.dev.model.entity.Currency;
+import com.dev.exception.DaoException;
+import com.dev.util.DataBaseUtil;
+
+import java.sql.*;
+import java.util.Optional;
+
+public class CurrencyDao {
+    private static final CurrencyDao INSTANCE = new CurrencyDao(); //паттерн синглтон
+    private static final String DELETE_SQL = """
+            DELETE FROM currencies
+            WHERE id = ?
+            """;
+    private static final String SAVE_SQL = """
+            INSERT INTO currencies (code,
+                                    full_name,
+                                    sign)
+            VALUES (?, ?, ?)
+            """;
+
+    private static final String UPDATE_SQL = """
+            UPDATE currencies
+            SET code = ?,
+                full_name = ?,
+                sign = ?
+            WHERE id = ?
+            """;
+
+    private static final String FIND_BY_ID_SQL = """
+            SELECT id,
+                   code,
+                   full_name,
+                   sign
+            FROM currencies
+            WHERE id = ?
+            """;
+
+    private CurrencyDao() {}
+
+    public static CurrencyDao getInstance() {
+        return INSTANCE;
+    }
+
+    public Optional<Currency> findById(int id) {
+//        try (Connection connection = DriverManager.getConnection("url");
+        try (Connection connection = DataBaseUtil.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(FIND_BY_ID_SQL)) {
+            preparedStatement.setInt(1, id);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            Currency currency = null;
+            if (resultSet.next()) {
+                currency = new Currency(resultSet.getInt("id"),
+                        resultSet.getString("code"), resultSet.getString("full_name"),
+                        resultSet.getString("sign"));
+            }
+            return Optional.ofNullable(currency);
+        } catch (SQLException e) {
+            throw new DaoException(e);
+        }
+    }
+
+    public void update(Currency currency) {
+        try (Connection connection = DataBaseUtil.getConnection();
+        PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_SQL)) {
+            preparedStatement.setString(1, currency.getCode());
+            preparedStatement.setString(2, currency.getFullName());
+            preparedStatement.setString(3, currency.getSign());
+            preparedStatement.setLong(4, currency.getId());
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            throw new DaoException(e);
+        }
+    }
+
+    public Currency save(Currency currency) {
+        try (Connection connection = DataBaseUtil.getConnection();
+        PreparedStatement preparedStatement = connection.prepareStatement(SAVE_SQL, Statement.RETURN_GENERATED_KEYS);) {
+            preparedStatement.setString(1, currency.getCode());
+            preparedStatement.setString(2, currency.getFullName());
+            preparedStatement.setString(3, currency.getSign());
+            preparedStatement.executeUpdate();
+
+            ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
+            if (generatedKeys.next()) {
+                currency.setId(generatedKeys.getInt("id"));
+            }
+            return currency;
+        } catch (SQLException e) {
+            throw new DaoException(e);
+        }
+    }
+
+    public boolean delete(int id) {
+        try (Connection connection = DataBaseUtil.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(DELETE_SQL)) { //TODO подставить URL (в данном случае каждый раз открывается и закрывается соединения
+            preparedStatement.setInt(1, id);
+            return preparedStatement.executeUpdate() > 0;
+        } catch (SQLException e) {
+            throw new DaoException(e);
+        }
+    }
+}

@@ -1,4 +1,4 @@
-package com.dev.entity;
+package com.dev.model.entity;
 
 public class ExchangeRate {
     private int id;
