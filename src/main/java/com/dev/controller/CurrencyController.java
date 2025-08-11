@@ -50,6 +50,7 @@ public class CurrencyController extends BaseController {
             resp.setContentType("application/json");
             resp.getWriter().write(new Gson().toJson(currencyDto));
 
+
         } catch (Exception e) {
             e.printStackTrace();
             resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
