@@ -62,10 +62,10 @@ public class BaseController extends HttpServlet {
 //    }
 
 
-    protected String serializeToJson(Currency currency) {
+    protected String serializeToJson(CurrencyDto currencyDto) {
         //Сделать проверку на null, на правильность данных (хотя может не понадобиться т к уже объект передаётся)
         Gson gson = new Gson();
-        return gson.toJson(currency);
+        return gson.toJson(currencyDto);
     }
 
     protected CurrencyDto deserializeFromJson(String json) {

@@ -1,9 +1,8 @@
 package com.dev.util;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import com.dev.Main;
+
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -18,12 +17,19 @@ public class DataBaseUtil {
         String dbUrl = null;
         String dbInit = null;
         Connection connection = null;
-        FileInputStream fis;
+//        FileInputStream fis;
         Properties properties = new Properties();
 
         try {
-            fis = new FileInputStream(new File("C:\\Users\\fisch\\dev\\testMyPetProject\\currency-exchange\\src\\main\\resources\\application.properties"));
+            System.out.println("Рабочая директория: " + System.getProperty("user.dir"));
+//            fis = new FileInputStream(new File("/resources/application.properties"));
+            //Метод Class.getResourceAsStream() позволяет загружать ресурсы (например, файлы) из classpath
+            // (пути к классам) в виде потока (InputStream). Это особенно полезно, когда файлы находятся внутри
+            // JAR-архива или в папке resources проекта (например, в Maven/Gradle)
+            InputStream fis = Main.class.getResourceAsStream("/application.properties");
+//            fis = new FileInputStream(new File("/resources/application.properties"));
 //            "src/main/resources/application.properties"
+//            "C:\\Users\\fisch\\dev\\testMyPetProject\\currency-exchange\\src\\main\\resources\\application.properties"
             properties.load(fis);
             dbUrl = properties.getProperty("db.host");
         } catch (FileNotFoundException e) {
@@ -47,6 +53,7 @@ public class DataBaseUtil {
 
     private static void init(Connection connection, String scriptPath) {
         try (Statement statement = connection.createStatement()) {
+
             String sql = new String(Files.readAllBytes((Paths.get(scriptPath))));
             statement.executeUpdate(sql);
         } catch (SQLException e) {

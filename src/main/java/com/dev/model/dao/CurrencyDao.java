@@ -83,9 +83,9 @@ public class CurrencyDao {
             preparedStatement.executeUpdate();
 
             ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
-//            if (generatedKeys.next()) {
-//                currency.setId(generatedKeys.getInt("id"));
-//            }
+            if (generatedKeys.next()) {
+                currency.setId(generatedKeys.getInt(1));
+            }
             return currency;
         } catch (SQLException e) {
             throw new DaoException(e);

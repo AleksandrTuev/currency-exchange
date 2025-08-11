@@ -21,14 +21,16 @@ public class CurrencyService {
         return INSTANCE;
     }
 
-    public void saveCurrency(CurrencyDto currencyDto) {
+    public Currency saveCurrency(CurrencyDto currencyDto) {
         Currency currency = new Currency(
                 currencyDto.code(),
                 currencyDto.fullName(),
                 currencyDto.sign()
         );
-//        currency = CurrencyDao.getInstance().save(currency); //возвращена валюта со вставленным id
-        CurrencyDao.getInstance().save(currency);
+        currency = CurrencyDao.getInstance().save(currency); //возвращена валюта со вставленным id
+        int a = 123;
+        return currency;
+//        CurrencyDao.getInstance().save(currency);
     }
 
 

@@ -4,7 +4,7 @@ package com.dev.model.entity;
 
 public class Currency {
 //    @SerializedName("id")
-    private int id;
+    private Integer id;
 //    @SerializedName("code")
     private String code;
 //    @SerializedName("fullName")
@@ -14,7 +14,7 @@ public class Currency {
 
     public Currency() {};
 
-    public Currency(int id, String code, String fullName, String sign) {
+    public Currency(Integer id, String code, String fullName, String sign) {
         this.id = id;
         this.code = code;
         this.fullName = fullName;

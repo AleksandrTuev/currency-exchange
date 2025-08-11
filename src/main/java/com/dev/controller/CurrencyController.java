@@ -24,12 +24,9 @@ public class CurrencyController extends BaseController {
         try (InputStream inputStream = req.getInputStream()) {
             // Чтение JSON из запроса
             String json = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
-//            System.out.println("Received JSON: " + json);
 
             // Десериализация в объект
             CurrencyDto currencyDto = deserializeFromJson(json);
-//            Currency currency = currencyDto.deserializeFromJson(json);
-//            Currency currency = new Gson().fromJson(json, Currency.class);
 
             // Проверка, что объект создан
             if (currencyDto == null) {
@@ -39,16 +36,13 @@ public class CurrencyController extends BaseController {
             }
 
             //dto отправлен в слой Service оттуда через слой DAO перенаправлен в БД
-            CurrencyService.getInstance().saveCurrency(currencyDto);
-
-
-
-            // Вывод в консоль для отладки
-//            System.out.println("Created currency: " + currencyDto.getCode());
+//            CurrencyService.getInstance().saveCurrency(currencyDto);
+            Currency currency = CurrencyService.getInstance().saveCurrency(currencyDto);
 
             // Отправка ответа
             resp.setContentType("application/json");
-            resp.getWriter().write(new Gson().toJson(currencyDto));
+//            resp.getWriter().write(new Gson().toJson(currencyDto));
+            resp.getWriter().write(new Gson().toJson(currency));
 
 
         } catch (Exception e) {
