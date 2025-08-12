@@ -22,7 +22,7 @@ public class Currency {
     }
 
     public Currency(String code, String fullName, String sign) {
-        this(0,fullName,sign,code);
+        this(0,code,fullName,sign);
     }
 
     public void setCode(String code) {

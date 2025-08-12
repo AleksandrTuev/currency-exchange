@@ -6,7 +6,6 @@ import com.dev.model.entity.Currency;
 
 public class CurrencyService {
     private static final CurrencyService INSTANCE = new CurrencyService();
-//    private CurrencyController currencyController;
     /*
     * Singleton стоит использовать для:
         Service классы (если они stateless)
@@ -15,22 +14,16 @@ public class CurrencyService {
         Класс не хранит изменяемое состояние (т.е. нет полей, которые могут быть модифицированы после создания).
     * Все данные передаются через параметры методов.*/
 
-    private CurrencyService() {}
+    private CurrencyService() {
+    }
 
     public static CurrencyService getInstance() {
         return INSTANCE;
     }
 
     public Currency saveCurrency(CurrencyDto currencyDto) {
-        Currency currency = new Currency(
-                currencyDto.code(),
-                currencyDto.fullName(),
-                currencyDto.sign()
-        );
-        currency = CurrencyDao.getInstance().save(currency); //возвращена валюта со вставленным id
-        int a = 123;
-        return currency;
-//        CurrencyDao.getInstance().save(currency);
+        Currency currency = new Currency(currencyDto.code(), currencyDto.fullName(), currencyDto.sign());
+        return CurrencyDao.getInstance().save(currency); //возвращена валюта со вставленным id
     }
 
 
