@@ -4,6 +4,9 @@ import com.dev.dto.CurrencyDto;
 import com.dev.model.dao.CurrencyDao;
 import com.dev.model.entity.Currency;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class CurrencyService {
     private static final CurrencyService INSTANCE = new CurrencyService();
     /*
@@ -19,6 +22,10 @@ public class CurrencyService {
 
     public static CurrencyService getInstance() {
         return INSTANCE;
+    }
+
+    public List<Currency> getCurrencies() {
+        return CurrencyDao.getInstance().findAll();
     }
 
     public Currency saveCurrency(CurrencyDto currencyDto) {

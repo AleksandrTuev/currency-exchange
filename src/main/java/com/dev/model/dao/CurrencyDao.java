@@ -5,10 +5,17 @@ import com.dev.exception.DaoException;
 import com.dev.util.DataBaseUtil;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 public class CurrencyDao {
     private static final CurrencyDao INSTANCE = new CurrencyDao(); //паттерн синглтон
+    private static final String PARAMETER_ID = "id";
+    private static final String PARAMETER_CODE = "code";
+    private static final String PARAMETER_FULL_NAME = "full_name";
+    private static final String PARAMETER_SIGN = "sign";
+
     private static final String DELETE_SQL = """
             DELETE FROM currencies
             WHERE id = ?
@@ -37,14 +44,41 @@ public class CurrencyDao {
             WHERE id = ?
             """;
 
-    private CurrencyDao() {}
+    private static final String FIND_ALL = """
+            SELECT id,
+                   code,
+                   full_name,
+                   sign
+            FROM currencies
+            """;
+
+
+    private CurrencyDao() {
+    }
 
     public static CurrencyDao getInstance() {
         return INSTANCE;
     }
 
+    public List<Currency> findAll() {
+        List<Currency> currencies = new ArrayList<>();
+
+        try (Connection connection = DataBaseUtil.getConnection();
+        PreparedStatement preparedStatement = connection.prepareStatement(FIND_ALL)) {
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()) {
+                currencies.add(new Currency(resultSet.getInt(PARAMETER_ID), resultSet.getString(PARAMETER_CODE),
+                        resultSet.getString(PARAMETER_FULL_NAME), resultSet.getString(PARAMETER_SIGN)));
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return currencies;
+    }
+
     public Optional<Currency> findById(int id) {
-//        try (Connection connection = DriverManager.getConnection("url");
         try (Connection connection = DataBaseUtil.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(FIND_BY_ID_SQL)) {
             preparedStatement.setInt(1, id);
@@ -63,7 +97,7 @@ public class CurrencyDao {
 
     public void update(Currency currency) {
         try (Connection connection = DataBaseUtil.getConnection();
-        PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_SQL)) {
+             PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_SQL)) {
             preparedStatement.setString(1, currency.getCode());
             preparedStatement.setString(2, currency.getFullName());
             preparedStatement.setString(3, currency.getSign());
@@ -76,7 +110,7 @@ public class CurrencyDao {
 
     public Currency save(Currency currency) {
         try (Connection connection = DataBaseUtil.getConnection();
-        PreparedStatement preparedStatement = connection.prepareStatement(SAVE_SQL, Statement.RETURN_GENERATED_KEYS);) {
+             PreparedStatement preparedStatement = connection.prepareStatement(SAVE_SQL, Statement.RETURN_GENERATED_KEYS);) {
             preparedStatement.setString(1, currency.getCode());
             preparedStatement.setString(2, currency.getFullName());
             preparedStatement.setString(3, currency.getSign());
