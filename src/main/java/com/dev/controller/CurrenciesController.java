@@ -2,7 +2,7 @@ package com.dev.controller;
 
 import com.dev.dto.CurrencyDto;
 import com.dev.model.entity.Currency;
-import com.dev.service.CurrencyService;
+import com.dev.service.CurrenciesService;
 import com.dev.util.ValidationUtil;
 import com.google.gson.Gson;
 import jakarta.servlet.annotation.WebServlet;
@@ -13,16 +13,16 @@ import java.io.IOException;
 import java.util.List;
 
 @WebServlet("/currencies")
-public class CurrencyController extends BaseController {
+public class CurrenciesController extends BaseController {
     private static final String PARAMETER_CODE = "code";
     private static final String PARAMETER_NAME = "name";
     private static final String PARAMETER_SIGN = "sign";
 
-    //Взаимодействует с: CurrencyService, ValidationUtil
+    //Взаимодействует с: CurrenciesService, ValidationUtil
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        List<Currency> list = CurrencyService.getInstance().getCurrencies();
+        List<Currency> list = CurrenciesService.getInstance().getCurrencies();
 
         if (list.isEmpty()) {
             //вернёт страницу с ошибкой 404
@@ -51,14 +51,14 @@ public class CurrencyController extends BaseController {
             return;
         }
 
-        if (CurrencyService.getInstance().hasCurrency(code)) {
+        if (CurrenciesService.getInstance().hasCurrency(code)) {
             resp.setStatus(HttpServletResponse.SC_CONFLICT);
             resp.getWriter().write("{\"error\": \"Currency already exists\"}");
             return;
         }
 
         CurrencyDto currencyDto = new CurrencyDto(code, name, sign);
-        Currency currency = CurrencyService.getInstance().saveCurrency(currencyDto);
+        Currency currency = CurrenciesService.getInstance().saveCurrency(currencyDto);
         resp.setStatus(HttpServletResponse.SC_CREATED);
         resp.setContentType("application/json");
         resp.setCharacterEncoding("UTF-8");

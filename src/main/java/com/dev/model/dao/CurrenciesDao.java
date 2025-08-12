@@ -9,8 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class CurrencyDao {
-    private static final CurrencyDao INSTANCE = new CurrencyDao(); //паттерн синглтон
+public class CurrenciesDao {
+    private static final CurrenciesDao INSTANCE = new CurrenciesDao(); //паттерн синглтон
     private static final String PARAMETER_ID = "id";
     private static final String PARAMETER_CODE = "code";
     private static final String PARAMETER_FULL_NAME = "full_name";
@@ -53,10 +53,10 @@ public class CurrencyDao {
             """;
 
 
-    private CurrencyDao() {
+    private CurrenciesDao() {
     }
 
-    public static CurrencyDao getInstance() {
+    public static CurrenciesDao getInstance() {
         return INSTANCE;
     }
 
