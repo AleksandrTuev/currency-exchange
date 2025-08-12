@@ -28,6 +28,10 @@ public class CurrenciesService {
         return CurrenciesDao.getInstance().findAll();
     }
 
+    public Currency getCurrencyByCode(String code) {
+        return CurrenciesDao.getInstance().findByCode(code).orElse(null);
+    }
+
     public Currency saveCurrency(CurrencyDto currencyDto) {
         Currency currency = new Currency(currencyDto.code(), currencyDto.fullName(), currencyDto.sign());
         return CurrenciesDao.getInstance().save(currency); //возвращена валюта со вставленным id

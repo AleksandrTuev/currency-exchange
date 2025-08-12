@@ -1,35 +1,75 @@
 package com.dev.util;
 
 public class ValidationUtil {
+    private static final int LENGTH_CODE = 3;
+    private static final int LENGTH_SIGN = 1;
+
     public static boolean validateParametersCurrency(String code, String name, String sign) {
+
         //TODO сделать логи
-        if ((code == null) || (name == null) || (sign == null) || (code.isEmpty()) || (name.isEmpty()) ||
-            (sign.isEmpty()))  {
+        if (isNullOrEmpty(code)) {
             return false;
         }
 
-        if (code.length() != 3) {
+        if (isNullOrEmpty(name)) {
             return false;
         }
 
-        if (sign.length() != 1) {
+        if (isNullOrEmpty(sign)) {
             return false;
         }
 
-        for (char c : code.toCharArray()) {
+        if (hasExactLength(code, LENGTH_CODE)) {
+            return false;
+        }
+
+        if (hasExactLength(sign, LENGTH_SIGN)) {
+            return false;
+        }
+
+        if (containsNonLetter(code)) {
+            return false;
+        }
+
+        if (isOnlyLettersAndBrackets(name)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public static boolean validateCurrencyCode(String currencyCode) {
+        if (isNullOrEmpty(currencyCode)) {
+            return false;
+        }
+        return containsNonLetter(currencyCode);
+    }
+
+    private static boolean isNullOrEmpty(String str) {
+        return str.isBlank();
+    }
+
+    private static boolean hasExactLength(String str, int length) {
+        return str.length() != length;
+    }
+
+    private static boolean containsNonLetter(String str) {
+        for (char c : str.toCharArray()) {
             if (!Character.isLetter(c)) {
-                return false;
+                return true;
             }
         }
+        return false;
+    }
 
-        for (char c : name.toCharArray()) {
+    private static boolean isOnlyLettersAndBrackets(String str) {
+        for (char c : str.toCharArray()) {
             if (!Character.isLetter(c)) {
                 if (!(c == '(' || c == ')' || c == ' ')) {
                     return false;
                 }
             }
         }
-
         return true;
     }
 }
