@@ -51,6 +51,12 @@ public class CurrencyController extends BaseController {
             return;
         }
 
+        if (CurrencyService.getInstance().hasCurrency(code)) {
+            resp.setStatus(HttpServletResponse.SC_CONFLICT);
+            resp.getWriter().write("{\"error\": \"Currency already exists\"}");
+            return;
+        }
+
         CurrencyDto currencyDto = new CurrencyDto(code, name, sign);
         Currency currency = CurrencyService.getInstance().saveCurrency(currencyDto);
         resp.setStatus(HttpServletResponse.SC_CREATED);

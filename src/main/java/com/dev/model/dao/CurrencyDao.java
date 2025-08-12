@@ -35,13 +35,13 @@ public class CurrencyDao {
             WHERE id = ?
             """;
 
-    private static final String FIND_BY_ID_SQL = """
+    private static final String FIND_BY_CODE_SQL = """
             SELECT id,
                    code,
                    full_name,
                    sign
             FROM currencies
-            WHERE id = ?
+            WHERE code = ?
             """;
 
     private static final String FIND_ALL = """
@@ -64,7 +64,7 @@ public class CurrencyDao {
         List<Currency> currencies = new ArrayList<>();
 
         try (Connection connection = DataBaseUtil.getConnection();
-        PreparedStatement preparedStatement = connection.prepareStatement(FIND_ALL)) {
+             PreparedStatement preparedStatement = connection.prepareStatement(FIND_ALL)) {
             ResultSet resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()) {
@@ -78,16 +78,16 @@ public class CurrencyDao {
         return currencies;
     }
 
-    public Optional<Currency> findById(int id) {
+    public Optional<Currency> findByCode(String currencyCode) {
         try (Connection connection = DataBaseUtil.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(FIND_BY_ID_SQL)) {
-            preparedStatement.setInt(1, id);
+             PreparedStatement preparedStatement = connection.prepareStatement(FIND_BY_CODE_SQL)) {
+            preparedStatement.setString(1, currencyCode);
             ResultSet resultSet = preparedStatement.executeQuery();
             Currency currency = null;
             if (resultSet.next()) {
-                currency = new Currency(resultSet.getInt("id"),
-                        resultSet.getString("code"), resultSet.getString("full_name"),
-                        resultSet.getString("sign"));
+                currency = new Currency(resultSet.getInt(PARAMETER_ID),
+                        resultSet.getString(PARAMETER_CODE), resultSet.getString(PARAMETER_FULL_NAME),
+                        resultSet.getString(PARAMETER_SIGN));
             }
             return Optional.ofNullable(currency);
         } catch (SQLException e) {

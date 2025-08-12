@@ -6,6 +6,7 @@ import com.dev.model.entity.Currency;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class CurrencyService {
     private static final CurrencyService INSTANCE = new CurrencyService();
@@ -31,6 +32,11 @@ public class CurrencyService {
     public Currency saveCurrency(CurrencyDto currencyDto) {
         Currency currency = new Currency(currencyDto.code(), currencyDto.fullName(), currencyDto.sign());
         return CurrencyDao.getInstance().save(currency); //возвращена валюта со вставленным id
+    }
+
+    public boolean hasCurrency(String currencyCode) {
+        Optional<Currency> currency = CurrencyDao.getInstance().findByCode(currencyCode);
+        return currency.isPresent();
     }
 
 
