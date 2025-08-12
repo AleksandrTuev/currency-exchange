@@ -23,8 +23,19 @@ public class CurrencyController extends BaseController {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         List<Currency> list = CurrencyService.getInstance().getCurrencies();
+
+        if (list.isEmpty()) {
+            //вернёт страницу с ошибкой 404
+            resp.sendError(HttpServletResponse.SC_NOT_FOUND);
+            //установлен http статус
+            //тело ответа разблокировано для заполнения
+//            resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        }
+
         resp.setStatus(HttpServletResponse.SC_OK);
         resp.setContentType("application/json");
+        resp.setCharacterEncoding("UTF-8");
         resp.getWriter().write(new Gson().toJson(list));
     }
 
@@ -44,6 +55,7 @@ public class CurrencyController extends BaseController {
         Currency currency = CurrencyService.getInstance().saveCurrency(currencyDto);
         resp.setStatus(HttpServletResponse.SC_CREATED);
         resp.setContentType("application/json");
+        resp.setCharacterEncoding("UTF-8");
         resp.getWriter().write(new Gson().toJson(currency));
     }
 }
