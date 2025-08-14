@@ -4,6 +4,7 @@ import com.dev.dto.CurrencyDto;
 import com.dev.dto.ExchangeRatesDto;
 import com.dev.service.CurrenciesService;
 import com.dev.service.ExchangeRatesService;
+import com.dev.util.ValidationUtil;
 import com.google.gson.Gson;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -32,7 +33,17 @@ public class ExchangeRatesController extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String baseCurrencyCode = req.getParameter(PARAMETER_BASE_CURRENCY_CODE).toUpperCase();
         String targetCurrencyCode = req.getParameter(PARAMETER_TARGET_CURRENCY_CODE).toUpperCase();
-        BigDecimal rate = new BigDecimal(req.getParameter(PARAMETER_RATE)).setScale(6, BigDecimal.ROUND_CEILING);
+        String rate = req.getParameter(PARAMETER_RATE);
+
+        if ((!ValidationUtil.validateParameterCode(baseCurrencyCode)) ||
+            (!ValidationUtil.validateParameterCode(targetCurrencyCode)) ||
+            (!ValidationUtil.validateParameterRate(rate))) {
+            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            resp.getWriter().write("{\"error\": \"Invalid parameters\"}");
+            return;
+        }
+
+        BigDecimal rateBigDecimal = new BigDecimal(rate).setScale(6, BigDecimal.ROUND_CEILING);
 
         if (!CurrenciesService.getInstance().hasCurrency(baseCurrencyCode)) {
             resp.sendError(HttpServletResponse.SC_NOT_FOUND);
@@ -53,7 +64,7 @@ public class ExchangeRatesController extends HttpServlet {
 //        ExchangeRatesDto exchangeRatesDTO = new ExchangeRatesDto(currencyBase.getId(), currencyTarget.getId(), rate);
 
         ExchangeRatesDto exchangeRatesDTO = ExchangeRatesService.getInstance().saveExchangeRates(currencyBaseDto,
-                currencyTargetDto, rate);
+                currencyTargetDto, rateBigDecimal);
 
         resp.setStatus(HttpServletResponse.SC_CREATED);
         resp.setContentType("application/json");

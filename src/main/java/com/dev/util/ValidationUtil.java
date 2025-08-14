@@ -1,5 +1,7 @@
 package com.dev.util;
 
+import java.math.BigDecimal;
+
 public class ValidationUtil {
     private static final int LENGTH_CODE = 3;
     private static final int LENGTH_SIGN = 3;
@@ -7,9 +9,12 @@ public class ValidationUtil {
     public static boolean validateParametersCurrency(String code, String name, String sign) {
 
         //TODO сделать логи
-        if (isNullOrEmpty(code)) {
+        if (!validateParameterCode(code)) {
             return false;
         }
+//        if (isNullOrEmpty(code)) {
+//            return false;
+//        }
 
         if (isNullOrEmpty(name)) {
             return false;
@@ -19,17 +24,17 @@ public class ValidationUtil {
             return false;
         }
 
-        if (hasExactLength(code)) {
-            return false;
-        }
+//        if (hasExactLength(code)) {
+//            return false;
+//        }
 
         if (!isLengthValid(sign)) {
             return false;
         }
 
-        if (containsNonLetter(code)) {
-            return false;
-        }
+//        if (containsNonLetter(code)) {
+//            return false;
+//        }
 
         if (!isOnlyLettersAndBrackets(name)) {
             return false;
@@ -75,5 +80,42 @@ public class ValidationUtil {
             }
         }
         return true;
+    }
+
+    private static boolean isOnlyNumbersAndPeriod(String str) {
+        for (char c : str.toCharArray()) {
+            if (!Character.isDigit(c)) {
+                if (!(c == '.')) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    public static boolean validateParameterRate(String rate) {
+        if (isNullOrEmpty(rate)) {
+            return false;
+        }
+
+        if (!isOnlyNumbersAndPeriod(rate)) {
+            return false;
+        }
+
+        BigDecimal rateBigDecimal = new BigDecimal(rate);
+
+        return rateBigDecimal.signum() > 0;
+    }
+
+    public static boolean validateParameterCode(String code) {
+        if (isNullOrEmpty(code)) {
+            return false;
+        }
+
+        if (hasExactLength(code)) {
+            return false;
+        }
+
+        return !containsNonLetter(code);
     }
 }
