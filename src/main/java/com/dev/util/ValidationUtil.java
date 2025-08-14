@@ -2,7 +2,7 @@ package com.dev.util;
 
 public class ValidationUtil {
     private static final int LENGTH_CODE = 3;
-    private static final int LENGTH_SIGN = 1;
+    private static final int LENGTH_SIGN = 3;
 
     public static boolean validateParametersCurrency(String code, String name, String sign) {
 
@@ -19,11 +19,11 @@ public class ValidationUtil {
             return false;
         }
 
-        if (hasExactLength(code, LENGTH_CODE)) {
+        if (hasExactLength(code)) {
             return false;
         }
 
-        if (hasExactLength(sign, LENGTH_SIGN)) {
+        if (!isLengthValid(sign)) {
             return false;
         }
 
@@ -31,7 +31,7 @@ public class ValidationUtil {
             return false;
         }
 
-        if (isOnlyLettersAndBrackets(name)) {
+        if (!isOnlyLettersAndBrackets(name)) {
             return false;
         }
 
@@ -49,8 +49,12 @@ public class ValidationUtil {
         return str.isBlank();
     }
 
-    private static boolean hasExactLength(String str, int length) {
-        return str.length() != length;
+    private static boolean hasExactLength(String str) { //имеет точную длину
+        return str.length() != LENGTH_CODE;
+    }
+
+    private static boolean isLengthValid(String str) {
+        return str.length() <= LENGTH_SIGN;
     }
 
     private static boolean containsNonLetter(String str) {
