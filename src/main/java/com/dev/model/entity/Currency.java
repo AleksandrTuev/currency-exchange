@@ -2,6 +2,8 @@ package com.dev.model.entity;
 
 //import com.google.gson.annotations.SerializedName;
 
+import com.dev.dto.CurrencyDto;
+
 public class Currency {
 //    @SerializedName("id")
     private Integer id;
@@ -55,6 +57,10 @@ public class Currency {
 
     public String getSign() {
         return sign;
+    }
+
+    public CurrencyDto toDto() {
+        return new CurrencyDto(id, code, fullName, sign);
     }
 
 

@@ -6,6 +6,7 @@ import com.dev.model.entity.Currency;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class CurrenciesService {
     private static final CurrenciesService INSTANCE = new CurrenciesService();
@@ -24,17 +25,28 @@ public class CurrenciesService {
         return INSTANCE;
     }
 
-    public List<Currency> getCurrencies() {
-        return CurrenciesDao.getInstance().findAll();
+    public List<CurrencyDto> getCurrencies() {
+        List<Currency> listCurrencies = CurrenciesDao.getInstance().findAll();
+        List<CurrencyDto> listCurrenciesDto = listCurrencies.stream()
+                .map(currency -> new CurrencyDto(
+                        currency.getId(),
+                        currency.getCode(),
+                        currency.getFullName(),
+                        currency.getSign()
+                ))
+                .toList();
+        return listCurrenciesDto;
     }
 
-    public Currency getCurrencyByCode(String code) {
-        return CurrenciesDao.getInstance().findByCode(code).orElse(null);
+    public CurrencyDto getCurrencyByCode(String code) {
+        Currency currency = CurrenciesDao.getInstance().findByCode(code).orElse(null);
+        return currency.toDto();
     }
 
-    public Currency saveCurrency(CurrencyDto currencyDto) {
-        Currency currency = new Currency(currencyDto.code(), currencyDto.fullName(), currencyDto.sign());
-        return CurrenciesDao.getInstance().save(currency); //возвращена валюта со вставленным id
+    public CurrencyDto saveCurrency(CurrencyDto currencyDto) {
+        Currency currency = new Currency(currencyDto.getCode(), currencyDto.getName(), currencyDto.getSign());
+        CurrenciesDao.getInstance().save(currency);
+        return currency.toDto(); //возвращена валюта Dto со вставленным id
     }
 
     public boolean hasCurrency(String currencyCode) {

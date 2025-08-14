@@ -14,6 +14,7 @@ import java.util.List;
 
 @WebServlet("/currencies")
 public class CurrenciesController extends BaseController {
+    //TODO либо сделать единый базовый класс, либо убрать
     private static final String PARAMETER_CODE = "code";
     private static final String PARAMETER_NAME = "name";
     private static final String PARAMETER_SIGN = "sign";
@@ -22,7 +23,7 @@ public class CurrenciesController extends BaseController {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        List<Currency> list = CurrenciesService.getInstance().getCurrencies();
+        List<CurrencyDto> list = CurrenciesService.getInstance().getCurrencies();
 
         if (list.isEmpty()) {
             //вернёт страницу с ошибкой 404
@@ -57,11 +58,10 @@ public class CurrenciesController extends BaseController {
             return;
         }
 
-        CurrencyDto currencyDto = new CurrencyDto(code, name, sign);
-        Currency currency = CurrenciesService.getInstance().saveCurrency(currencyDto);
+        CurrencyDto currencyDto = CurrenciesService.getInstance().saveCurrency(new CurrencyDto(code, name, sign));
         resp.setStatus(HttpServletResponse.SC_CREATED);
         resp.setContentType("application/json");
         resp.setCharacterEncoding("UTF-8");
-        resp.getWriter().write(new Gson().toJson(currency));
+        resp.getWriter().write(new Gson().toJson(currencyDto));
     }
 }

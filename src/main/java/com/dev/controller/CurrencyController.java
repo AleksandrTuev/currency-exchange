@@ -1,5 +1,6 @@
 package com.dev.controller;
 
+import com.dev.dto.CurrencyDto;
 import com.dev.model.entity.Currency;
 import com.dev.service.CurrenciesService;
 import com.dev.util.ValidationUtil;
@@ -37,10 +38,10 @@ public class CurrencyController extends HttpServlet {
             resp.getWriter().write("{\"error\": \"Currency not found\"}");
             return;
         }
-        Currency currency = CurrenciesService.getInstance().getCurrencyByCode(CurrencyCode);
+        CurrencyDto currencyDto = CurrenciesService.getInstance().getCurrencyByCode(CurrencyCode);
         resp.setStatus(HttpServletResponse.SC_OK);
         resp.setContentType("application/json");
         resp.setCharacterEncoding("UTF-8");
-        resp.getWriter().write(new Gson().toJson(currency));
+        resp.getWriter().write(new Gson().toJson(currencyDto));
     }
 }
