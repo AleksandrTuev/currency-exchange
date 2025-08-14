@@ -60,9 +60,6 @@ public class ExchangeRatesController extends HttpServlet {
         CurrencyDto currencyBaseDto = CurrenciesService.getInstance().getCurrencyByCode(baseCurrencyCode);
         CurrencyDto currencyTargetDto = CurrenciesService.getInstance().getCurrencyByCode(targetCurrencyCode);
 
-        //TODO посмотреть когда и как используется DTO объект
-//        ExchangeRatesDto exchangeRatesDTO = new ExchangeRatesDto(currencyBase.getId(), currencyTarget.getId(), rate);
-
         ExchangeRatesDto exchangeRatesDTO = ExchangeRatesService.getInstance().saveExchangeRates(currencyBaseDto,
                 currencyTargetDto, rateBigDecimal);
 

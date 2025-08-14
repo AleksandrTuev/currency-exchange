@@ -12,9 +12,6 @@ public class ValidationUtil {
         if (!validateParameterCode(code)) {
             return false;
         }
-//        if (isNullOrEmpty(code)) {
-//            return false;
-//        }
 
         if (isNullOrEmpty(name)) {
             return false;
@@ -24,17 +21,9 @@ public class ValidationUtil {
             return false;
         }
 
-//        if (hasExactLength(code)) {
-//            return false;
-//        }
-
         if (!isLengthValid(sign)) {
             return false;
         }
-
-//        if (containsNonLetter(code)) {
-//            return false;
-//        }
 
         if (!isOnlyLettersAndBrackets(name)) {
             return false;
