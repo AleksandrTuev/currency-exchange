@@ -6,7 +6,6 @@ import com.dev.service.CurrenciesService;
 import com.dev.service.ExchangeRatesService;
 import com.dev.util.ValidationUtil;
 import com.google.gson.Gson;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,6 +13,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.List;
 
 @WebServlet ("/exchangeRates")
 public class ExchangeRatesController extends HttpServlet {
@@ -22,15 +22,21 @@ public class ExchangeRatesController extends HttpServlet {
     private static final String PARAMETER_RATE = "rate";
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         /*
-        /exchangeRate/USDRUB #
-        Получение конкретного обменного курса. Валютная пара задаётся идущими подряд кодами валют в адресе запроса.
+        Получение списка всех обменных курсов. Пример ответа:
         */
+        List<ExchangeRatesDto> list = ExchangeRatesService.getInstance().getExchangeRates();
+        //TODO обработать ошибки
+        resp.setStatus(HttpServletResponse.SC_OK);
+        resp.setContentType("application/json");
+        resp.setCharacterEncoding("UTF-8");
+        resp.getWriter().print(new Gson().toJson(list));
+
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String baseCurrencyCode = req.getParameter(PARAMETER_BASE_CURRENCY_CODE).toUpperCase();
         String targetCurrencyCode = req.getParameter(PARAMETER_TARGET_CURRENCY_CODE).toUpperCase();
         String rate = req.getParameter(PARAMETER_RATE);
