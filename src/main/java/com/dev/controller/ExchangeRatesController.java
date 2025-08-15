@@ -23,16 +23,18 @@ public class ExchangeRatesController extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        /*
-        Получение списка всех обменных курсов. Пример ответа:
-        */
         List<ExchangeRatesDto> list = ExchangeRatesService.getInstance().getExchangeRates();
+        if (list.isEmpty()) {
+            resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            resp.getWriter().write("{\"error\": \"Exchange rates not found\"}");
+            return;
+        }
         //TODO обработать ошибки
+
         resp.setStatus(HttpServletResponse.SC_OK);
         resp.setContentType("application/json");
         resp.setCharacterEncoding("UTF-8");
         resp.getWriter().print(new Gson().toJson(list));
-
     }
 
     @Override
