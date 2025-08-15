@@ -14,7 +14,6 @@ public class ExchangeRate {
     // расчётов
     private BigDecimal rate; //Курс обмена единицы базовой валюты к единице целевой валюты
 
-//    public ExchangeRate() {}
     public ExchangeRate(Currency baseCurrencyId, Currency targetCurrencyId, BigDecimal rate) {
         this.baseCurrencyId = baseCurrencyId;
         this.targetCurrencyId = targetCurrencyId;
@@ -22,8 +21,10 @@ public class ExchangeRate {
     }
 
     public ExchangeRate(Integer id, Currency baseCurrencyId, Currency targetCurrencyId, BigDecimal rate) {
-        super();
         this.id = id;
+        this.baseCurrencyId = baseCurrencyId;
+        this.targetCurrencyId = targetCurrencyId;
+        this.rate = rate;
     }
 
     public Integer getId() {
