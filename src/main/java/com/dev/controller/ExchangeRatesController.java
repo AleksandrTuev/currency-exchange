@@ -15,11 +15,10 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
 
+import static com.dev.util.ProjectConstants.*;
+
 @WebServlet ("/exchangeRates")
 public class ExchangeRatesController extends HttpServlet {
-    private static final String PARAMETER_BASE_CURRENCY_CODE = "baseCurrencyCode";
-    private static final String PARAMETER_TARGET_CURRENCY_CODE = "targetCurrencyCode";
-    private static final String PARAMETER_RATE = "rate";
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {

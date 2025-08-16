@@ -2,9 +2,9 @@ package com.dev.util;
 
 import java.math.BigDecimal;
 
+import static com.dev.util.ProjectConstants.*;
+
 public class ValidationUtil {
-    private static final int LENGTH_CODE = 3;
-    private static final int LENGTH_SIGN = 3;
 
     public static boolean validateParametersCurrency(String code, String name, String sign) {
 
@@ -32,11 +32,16 @@ public class ValidationUtil {
         return true;
     }
 
-    public static boolean validateCurrencyCode(String currencyCode) {
+    public static boolean validateParameterCode(String currencyCode) {
         if (isNullOrEmpty(currencyCode)) {
             return false;
         }
-        return containsNonLetter(currencyCode);
+
+        if (hasExactLength(currencyCode)) {
+            return false;
+        }
+
+        return !containsNonLetter(currencyCode);
     }
 
     private static boolean isNullOrEmpty(String str) {
@@ -96,15 +101,24 @@ public class ValidationUtil {
         return rateBigDecimal.signum() > 0;
     }
 
-    public static boolean validateParameterCode(String code) {
-        if (isNullOrEmpty(code)) {
+    public static boolean isCurrencyPairValid(String currencyPair) {
+        if (isNullOrEmpty(currencyPair)) {
             return false;
         }
 
-        if (hasExactLength(code)) {
+        if (currencyPair.length() < LENGTH_STRING_REQUEST_CURRENCY_PAIR) {
             return false;
         }
 
-        return !containsNonLetter(code);
+        String baseCurrencyCode = currencyPair.substring(INDEX_FIRST_LETTER_BASE_CURRENCY_CODE,
+                INDEX_LAST_LETTER_BASE_CURRENCY_CODE);
+        String targetCurrencyCode = currencyPair.substring(INDEX_FIRST_LETTER_TARGET_CURRENCY_CODE,
+                INDEX_LAST_LETTER_TARGET_CURRENCY_CODE);
+
+        if (!validateParameterCode(baseCurrencyCode)) {
+            return false;
+        }
+
+        return validateParameterCode(targetCurrencyCode);
     }
 }

@@ -44,7 +44,7 @@ public class CurrenciesDao {
             WHERE code = ?
             """;
 
-    private static final String FIND_ALL = """
+    private static final String FIND_ALL_SQL = """
             SELECT id,
                    code,
                    full_name,
@@ -64,7 +64,7 @@ public class CurrenciesDao {
         List<Currency> currencies = new ArrayList<>();
 
         try (Connection connection = DataBaseUtil.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(FIND_ALL)) {
+             PreparedStatement preparedStatement = connection.prepareStatement(FIND_ALL_SQL)) {
             ResultSet resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()) {

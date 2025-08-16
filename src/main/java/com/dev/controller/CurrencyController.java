@@ -1,7 +1,6 @@
 package com.dev.controller;
 
 import com.dev.dto.CurrencyDto;
-import com.dev.model.entity.Currency;
 import com.dev.service.CurrenciesService;
 import com.dev.util.ValidationUtil;
 import com.google.gson.Gson;
@@ -25,7 +24,7 @@ public class CurrencyController extends HttpServlet {
 
         String CurrencyCode = req.getPathInfo().substring(1).toUpperCase();
 
-        if (ValidationUtil.validateCurrencyCode(CurrencyCode)) {
+        if (ValidationUtil.validateParameterCode(CurrencyCode)) {
             resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             resp.getWriter().write("{\"error\": \"Invalid currency code\"}");
             return;
