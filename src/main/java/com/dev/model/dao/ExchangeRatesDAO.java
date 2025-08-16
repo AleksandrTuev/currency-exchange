@@ -121,9 +121,10 @@ public class ExchangeRatesDAO {
             ExchangeRate exchangeRate = null;
 
             preparedStatement.setInt(1, baseCurrencyId);
-            preparedStatement.setInt(2,targetCurrencyId);
+            preparedStatement.setInt(2, targetCurrencyId);
 
             ResultSet resultSet = preparedStatement.executeQuery();
+            //TODO выкинуть исключение когда нет пары
 
 
             if (resultSet.next()) {

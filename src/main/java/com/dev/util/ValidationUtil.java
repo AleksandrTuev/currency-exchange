@@ -76,7 +76,7 @@ public class ValidationUtil {
         return true;
     }
 
-    private static boolean isOnlyNumbersAndPeriod(String str) {
+    private static boolean isOnlyNumbersAndPoint(String str) {
         for (char c : str.toCharArray()) {
             if (!Character.isDigit(c)) {
                 if (!(c == '.')) {
@@ -92,7 +92,7 @@ public class ValidationUtil {
             return false;
         }
 
-        if (!isOnlyNumbersAndPeriod(rate)) {
+        if (!isOnlyNumbersAndPoint(rate)) {
             return false;
         }
 
