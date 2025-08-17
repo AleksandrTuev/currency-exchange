@@ -1,6 +1,7 @@
 package com.dev.util;
 
 import com.dev.Main;
+import com.dev.exception.DataAccessException;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -27,22 +28,19 @@ public class DataBaseUtil {
             InputStream fis = Main.class.getResourceAsStream("/application.properties");
             properties.load(fis);
             dbUrl = properties.getProperty("db.host");
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
 
-        try {
-            Class.forName("org.sqlite.JDBC");
             connection = DriverManager.getConnection(dbUrl);
             dbInit = properties.getProperty("db.init.script");
             init(connection, dbInit);
+
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException("File 'application.properties' not found");
+        } catch (IOException e) {
+            throw new RuntimeException("Error reading file 'application.properties'");
         } catch (SQLException e) {
-            throw new RuntimeException(e);
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
+            throw new DataAccessException("Cannot open DB connection", e);
         }
+
         return connection;
     }
 
