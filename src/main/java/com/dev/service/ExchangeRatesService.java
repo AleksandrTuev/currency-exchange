@@ -45,8 +45,9 @@ public class ExchangeRatesService {
         int baseCurrencyId = CurrenciesDao.getInstance().findByCode(baseCurrencyCode).orElse(null).getId();
         int targetCurrencyId = CurrenciesDao.getInstance().findByCode(targetCurrencyCode).orElse(null).getId();
         //TODO сделать проверку что если одна из валют NULL выкидывать исключение
-        ExchangeRate exchangeRate = ExchangeRatesDAO.getInstance().updateByIds(baseCurrencyId, targetCurrencyId, rate).orElse(null);
-//        exchangeRate = ExchangeRatesDAO.getInstance().updateByIds()
+        ExchangeRate exchangeRate = ExchangeRatesDAO.getInstance().findByIds(baseCurrencyId, targetCurrencyId).orElse(null);
+        ExchangeRatesDAO.getInstance().updateByIds(baseCurrencyId, targetCurrencyId, rate);
+        exchangeRate.setRate(rate);
         //TODO сделать проверку exchangeRate на null
         return exchangeRate.toDto();
     }

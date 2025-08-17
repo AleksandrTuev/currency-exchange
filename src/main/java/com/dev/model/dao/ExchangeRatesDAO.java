@@ -63,11 +63,7 @@ public class ExchangeRatesDAO {
             preparedStatement.executeUpdate();
 
             ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
-            int id = generatedKeys.getInt(1);
-//            if (generatedKeys.next()) {
-//                exchangeRatesDTO.(generatedKeys.getInt(1));
-//            }
-            return id;
+            return generatedKeys.getInt(1);
         } catch (SQLException e) {
             throw new DaoException(e);
         }
@@ -116,7 +112,7 @@ public class ExchangeRatesDAO {
             }
             return new Currency(id, code, fullName, sign);
         } catch (SQLException e) {
-            throw new DaoException(e);
+            throw new DaoException(e); //TODO добавить инфо о том что валюта по id не найдена
         }
     }
 
@@ -147,31 +143,15 @@ public class ExchangeRatesDAO {
         }
     }
 
-    public Optional<ExchangeRate> updateByIds(int baseCurrencyId, int targetCurrencyId, BigDecimal rate) throws DaoException {
+    public void updateByIds(int baseCurrencyId, int targetCurrencyId, BigDecimal rate) throws DaoException {
         try (Connection connection = DataBaseUtil.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_BY_IDS_SQL)) {
-            ExchangeRate exchangeRate = null;
 
             preparedStatement.setBigDecimal(1, rate);
             preparedStatement.setInt(2, baseCurrencyId);
             preparedStatement.setInt(3, targetCurrencyId);
             preparedStatement.executeUpdate();
-
-//            ResultSet resultSet = preparedStatement.executeQuery(FIND_BY_ID_SQL);
 //            //TODO выкинуть исключение когда нет пары
-//
-//
-//            if (resultSet.next()) {
-//                int id = resultSet.getInt(PARAMETER_ID);
-//                BigDecimal rateBigDecimal = resultSet.getBigDecimal(PARAMETER_RATE);
-//
-//                Currency baseCurrency = getCurrencyById(connection, baseCurrencyId);
-//                Currency targetCurrency = getCurrencyById(connection, targetCurrencyId);
-//
-//                exchangeRate = new ExchangeRate(id, baseCurrency, targetCurrency, rateBigDecimal);
-//            }
-//            return Optional.ofNullable(exchangeRate);
-            return findByIds(baseCurrencyId, targetCurrencyId);
         } catch (SQLException e) {
             throw new DaoException(e);
         }
