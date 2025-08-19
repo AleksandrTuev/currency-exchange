@@ -2,6 +2,7 @@ package com.dev.util;
 
 import com.dev.Main;
 import com.dev.exception.DataAccessException;
+import com.dev.exception.DataBaseConnectionException;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -15,7 +16,7 @@ public class DataBaseUtil {
     private DataBaseUtil() {
     }
 
-    public static Connection getConnection() {
+    public static Connection getConnection() throws DataBaseConnectionException {
         String dbUrl = null;
         String dbInit = null;
         Connection connection = null;
@@ -34,11 +35,11 @@ public class DataBaseUtil {
             init(connection, dbInit);
 
         } catch (FileNotFoundException e) {
-            throw new RuntimeException("File 'application.properties' not found", e);
+            throw new DataBaseConnectionException("File 'application.properties' not found", e);
         } catch (IOException e) {
-            throw new RuntimeException("Error reading file 'application.properties'", e);
+            throw new DataBaseConnectionException("Error reading file 'application.properties'", e);
         } catch (SQLException e) {
-            throw new DataAccessException("Cannot open DB connection", e);
+            throw new DataBaseConnectionException("Cannot open DB connection", e);
         }
 
         return connection;

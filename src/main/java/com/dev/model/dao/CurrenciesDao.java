@@ -83,13 +83,13 @@ public class CurrenciesDao {
              PreparedStatement preparedStatement = connection.prepareStatement(FIND_BY_CODE_SQL)) {
             preparedStatement.setString(1, currencyCode);
             ResultSet resultSet = preparedStatement.executeQuery();
-            Currency currency = null;
             if (resultSet.next()) {
-                currency = new Currency(resultSet.getInt(PARAMETER_ID),
+                return Optional.of(new Currency(resultSet.getInt(PARAMETER_ID),
                         resultSet.getString(PARAMETER_CODE), resultSet.getString(PARAMETER_FULL_NAME),
-                        resultSet.getString(PARAMETER_SIGN));
+                        resultSet.getString(PARAMETER_SIGN)));
+            } else {
+                return Optional.empty();
             }
-            return Optional.ofNullable(currency);
         } catch (SQLException e) {
             throw new DaoException(e);
         }

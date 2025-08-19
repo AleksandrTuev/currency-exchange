@@ -1,6 +1,7 @@
 package com.dev.service;
 
 import com.dev.dto.CurrencyDto;
+import com.dev.exception.CurrencyNotFoundException;
 import com.dev.model.dao.CurrenciesDao;
 import com.dev.model.entity.Currency;
 
@@ -39,7 +40,9 @@ public class CurrenciesService {
     }
 
     public CurrencyDto getCurrencyByCode(String code) {
-        Currency currency = CurrenciesDao.getInstance().findByCode(code).orElse(null);
+        Currency currency = CurrenciesDao.getInstance().findByCode(code).orElseThrow(
+                () -> new CurrencyNotFoundException(code)
+        );
         return currency.toDto();
     }
 

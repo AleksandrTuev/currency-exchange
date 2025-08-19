@@ -6,24 +6,20 @@ import java.math.BigDecimal;
 
 public class ExchangeRate {
     private Integer id;
-    //TODO можно сделать базовую и целевую ставки типа Currency, но по ТЗ это int переменные
-    private Currency baseCurrencyId;
-    private Currency targetCurrencyId;
-    //TODO по ТЗ rate имеет тип decimal, но в sql есть только REAL - типо double (меньшая точность). Можно попробовать
-    // в DB сделать ту переменную типу TEXT, а на уровне сущности переводить текст в DECIMAL (BigDecimal) для точных
-    // расчётов
+    private Currency baseCurrency;
+    private Currency targetCurrency;
     private BigDecimal rate; //Курс обмена единицы базовой валюты к единице целевой валюты
 
-    public ExchangeRate(Currency baseCurrencyId, Currency targetCurrencyId, BigDecimal rate) {
-        this.baseCurrencyId = baseCurrencyId;
-        this.targetCurrencyId = targetCurrencyId;
+    public ExchangeRate(Currency baseCurrency, Currency targetCurrency, BigDecimal rate) {
+        this.baseCurrency = baseCurrency;
+        this.targetCurrency = targetCurrency;
         this.rate = rate;
     }
 
-    public ExchangeRate(Integer id, Currency baseCurrencyId, Currency targetCurrencyId, BigDecimal rate) {
+    public ExchangeRate(Integer id, Currency baseCurrency, Currency targetCurrency, BigDecimal rate) {
         this.id = id;
-        this.baseCurrencyId = baseCurrencyId;
-        this.targetCurrencyId = targetCurrencyId;
+        this.baseCurrency = baseCurrency;
+        this.targetCurrency = targetCurrency;
         this.rate = rate;
     }
 
@@ -35,20 +31,20 @@ public class ExchangeRate {
         this.id = id;
     }
 
-    public Currency getBaseCurrencyId() {
-        return baseCurrencyId;
+    public Currency getBaseCurrency() {
+        return baseCurrency;
     }
 
-    public void setBaseCurrencyId(Currency baseCurrencyId) {
-        this.baseCurrencyId = baseCurrencyId;
+    public void setBaseCurrency(Currency baseCurrency) {
+        this.baseCurrency = baseCurrency;
     }
 
-    public Currency getTargetCurrencyId() {
-        return targetCurrencyId;
+    public Currency getTargetCurrency() {
+        return targetCurrency;
     }
 
-    public void setTargetCurrencyId(Currency targetCurrencyId) {
-        this.targetCurrencyId = targetCurrencyId;
+    public void setTargetCurrency(Currency targetCurrency) {
+        this.targetCurrency = targetCurrency;
     }
 
     public BigDecimal getRate() {
@@ -60,15 +56,15 @@ public class ExchangeRate {
     }
 
     public ExchangeRatesDto toDto() {
-        return new ExchangeRatesDto(id, baseCurrencyId.toDto(), targetCurrencyId.toDto(), rate);
+        return new ExchangeRatesDto(id, baseCurrency.toDto(), targetCurrency.toDto(), rate);
     }
 
     @Override
     public String toString() {
         return "ExchangeRate{" +
                "id=" + id +
-               ", baseCurrencyId='" + baseCurrencyId + '\'' +
-               ", targetCurrencyId='" + targetCurrencyId + '\'' +
+               ", baseCurrencyId='" + baseCurrency + '\'' +
+               ", targetCurrencyId='" + targetCurrency + '\'' +
                ", rate=" + rate +
                '}';
     }

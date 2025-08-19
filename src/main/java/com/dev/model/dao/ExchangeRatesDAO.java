@@ -1,6 +1,8 @@
 package com.dev.model.dao;
 
+import com.dev.exception.CurrencyNotFoundException;
 import com.dev.exception.DaoException;
+import com.dev.exception.DataBaseConnectionException;
 import com.dev.model.entity.Currency;
 import com.dev.model.entity.ExchangeRate;
 import com.dev.util.DataBaseUtil;
@@ -64,8 +66,8 @@ public class ExchangeRatesDAO {
 
             ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
             return generatedKeys.getInt(1);
-        } catch (SQLException e) {
-            throw new DaoException(e);
+        } catch (SQLException | DataBaseConnectionException e) {
+            throw new DaoException("cannot open DB connection", e);
         }
     }
 
@@ -84,35 +86,27 @@ public class ExchangeRatesDAO {
                 Currency baseCurrency = getCurrencyById(connection, baseCurrencyId);
                 Currency targetCurrency = getCurrencyById(connection, targetCurrencyId);
 
-                ExchangeRate exchangeRate = new ExchangeRate(id, baseCurrency, targetCurrency, rate);
-                exchangeRates.add(exchangeRate);
+                exchangeRates.add(new ExchangeRate(id, baseCurrency, targetCurrency, rate));
             }
 
-        } catch (SQLException e) {
-            throw new DaoException(e);
+        } catch (SQLException | DataBaseConnectionException e) {
+            throw new DaoException("cannot open DB connection", e);
         }
         return exchangeRates;
     }
 
     private Currency getCurrencyById(Connection connection, int currencyId) throws DaoException {
-        int id = 0;
-        String code = "";
-        String fullName = "";
-        String sign = "";
-
         try (PreparedStatement preparedStatement = connection.prepareStatement(FIND_BY_ID_SQL)) {
             preparedStatement.setInt(1, currencyId);
             ResultSet resultSet = preparedStatement.executeQuery();
 
-            if (resultSet.next()) {
-                id = resultSet.getInt(PARAMETER_ID);
-                code = resultSet.getString(PARAMETER_CODE);
-                fullName = resultSet.getString(PARAMETER_FULL_NAME);
-                sign = resultSet.getString(PARAMETER_SIGN);
-            }
+            int id = resultSet.getInt(PARAMETER_ID);
+            String code = resultSet.getString(PARAMETER_CODE);
+            String fullName = resultSet.getString(PARAMETER_FULL_NAME);
+            String sign = resultSet.getString(PARAMETER_SIGN);
             return new Currency(id, code, fullName, sign);
         } catch (SQLException e) {
-            throw new DaoException(e); //TODO добавить инфо о том что валюта по id не найдена
+            throw new DaoException(e);
         }
     }
 
@@ -125,8 +119,6 @@ public class ExchangeRatesDAO {
             preparedStatement.setInt(2, targetCurrencyId);
 
             ResultSet resultSet = preparedStatement.executeQuery();
-            //TODO выкинуть исключение когда нет пары
-
 
             if (resultSet.next()) {
                 int id = resultSet.getInt(PARAMETER_ID);
@@ -136,8 +128,10 @@ public class ExchangeRatesDAO {
                 Currency targetCurrency = getCurrencyById(connection, targetCurrencyId);
 
                 exchangeRate = new ExchangeRate(id, baseCurrency, targetCurrency, rate);
+                return Optional.of(exchangeRate);
+            } else {
+                return Optional.empty();
             }
-            return Optional.ofNullable(exchangeRate);
         } catch (SQLException e) {
             throw new DaoException(e);
         }
