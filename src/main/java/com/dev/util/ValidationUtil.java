@@ -106,7 +106,7 @@ public class ValidationUtil {
             return false;
         }
 
-        if (currencyPair.length() < LENGTH_STRING_REQUEST_CURRENCY_PAIR) {
+        if (currencyPair.length() != LENGTH_STRING_REQUEST_CURRENCY_PAIR) {
             return false;
         }
 
