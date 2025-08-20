@@ -3,6 +3,7 @@ package com.dev.controller;
 import com.dev.dto.CurrencyDto;
 import com.dev.exception.CurrencyNotFoundException;
 import com.dev.exception.DataAccessException;
+import com.dev.exception.ValidationException;
 import com.dev.model.entity.Currency;
 import com.dev.service.CurrenciesService;
 import com.dev.util.ValidationUtil;
@@ -29,34 +30,41 @@ public class CurrenciesController extends BaseController {
             resp.setContentType("application/json");
             resp.setCharacterEncoding("UTF-8");
             resp.getWriter().write(new Gson().toJson(list));
-        } catch (DataAccessException | CurrencyNotFoundException e) {
+        } catch (DataAccessException e) {
             resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             resp.getWriter().write(e.getMessage());
+        } catch (CurrencyNotFoundException e) {
+            resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            resp.getWriter().write("error: " + e.getMessage());
         }
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        String code = req.getParameter(PARAMETER_CODE).toUpperCase().trim();
-        String name = req.getParameter(PARAMETER_NAME).trim();
-        String sign = req.getParameter(PARAMETER_SIGN).trim();
+        try {
+            String code = req.getParameter(PARAMETER_CODE).toUpperCase().trim();
+            String name = req.getParameter(PARAMETER_NAME).trim();
+            String sign = req.getParameter(PARAMETER_SIGN).trim();
 
-        if (!ValidationUtil.validateParametersCurrency(code, name, sign)) {
+            if (!ValidationUtil.validateParametersCurrency(code, name, sign)) {
+                throw new ValidationException("invalid parameters");
+            }
+
+            CurrencyDto currencyDto = CurrenciesService.getInstance().saveCurrency(new CurrencyDto(code, name, sign));
+            resp.setStatus(HttpServletResponse.SC_CREATED);
+            resp.setContentType("application/json");
+            resp.setCharacterEncoding("UTF-8");
+            resp.getWriter().write(new Gson().toJson(currencyDto));
+
+        } catch (ValidationException e) {
             resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            resp.getWriter().write("{\"error\": \"Invalid parameters\"}");
-            return;
-        }
-
-        if (CurrenciesService.getInstance().hasCurrency(code)) {
+            resp.getWriter().write("error: " + e.getMessage());
+        } catch (CurrencyNotFoundException e) {
             resp.setStatus(HttpServletResponse.SC_CONFLICT);
-            resp.getWriter().write("{\"error\": \"Currency already exists\"}");
-            return;
+            resp.getWriter().write("error: " + e.getMessage());
+        } catch (DataAccessException e) {
+            resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            resp.getWriter().write(e.getMessage());
         }
-
-        CurrencyDto currencyDto = CurrenciesService.getInstance().saveCurrency(new CurrencyDto(code, name, sign));
-        resp.setStatus(HttpServletResponse.SC_CREATED);
-        resp.setContentType("application/json");
-        resp.setCharacterEncoding("UTF-8");
-        resp.getWriter().write(new Gson().toJson(currencyDto));
     }
 }

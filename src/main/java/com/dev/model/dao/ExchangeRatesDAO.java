@@ -132,8 +132,8 @@ public class ExchangeRatesDAO {
             } else {
                 return Optional.empty();
             }
-        } catch (SQLException e) {
-            throw new DaoException(e);
+        } catch (SQLException | DataBaseConnectionException e) {
+            throw new DaoException("cannot open DB connection", e);
         }
     }
 
@@ -145,8 +145,8 @@ public class ExchangeRatesDAO {
             preparedStatement.setInt(2, baseCurrencyId);
             preparedStatement.setInt(3, targetCurrencyId);
             preparedStatement.executeUpdate();
-        } catch (SQLException e) {
-            throw new DaoException(e);
+        } catch (SQLException | DataBaseConnectionException e) {
+            throw new DaoException("cannot open DB connection", e);
         }
     }
 }

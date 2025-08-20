@@ -1,6 +1,7 @@
 package com.dev.service;
 
 import com.dev.dto.CurrencyDto;
+import com.dev.exception.CurrencyException;
 import com.dev.exception.CurrencyNotFoundException;
 import com.dev.exception.DaoException;
 import com.dev.exception.DataAccessException;
@@ -8,7 +9,6 @@ import com.dev.model.dao.CurrenciesDao;
 import com.dev.model.entity.Currency;
 
 import java.util.List;
-import java.util.Optional;
 
 public class CurrenciesService {
     private static final CurrenciesService INSTANCE = new CurrenciesService();
@@ -50,16 +50,18 @@ public class CurrenciesService {
         }
     }
 
-    public CurrencyDto saveCurrency(CurrencyDto currencyDto) {
-        Currency currency = new Currency(currencyDto.getCode(), currencyDto.getName(), currencyDto.getSign());
-        CurrenciesDao.getInstance().save(currency);
-        return currency.toDto(); //возвращена валюта Dto со вставленным id
+    public CurrencyDto saveCurrency(CurrencyDto currencyDto) throws DataAccessException, CurrencyException {
+        try {
+            if (CurrenciesDao.getInstance().findByCode(currencyDto.getCode()).isPresent()) {
+                throw new CurrencyException("currency already exist");
+            }
+
+            Currency currency = new Currency(currencyDto.getCode(), currencyDto.getName(), currencyDto.getSign());
+            int id = CurrenciesDao.getInstance().save(currency);
+            currency.setId(id);
+            return currency.toDto();
+        } catch (DaoException e) {
+            throw new DataAccessException("cannot save currency", e);
+        }
     }
-
-    public boolean hasCurrency(String currencyCode) {
-        Optional<Currency> currency = CurrenciesDao.getInstance().findByCode(currencyCode);
-        return currency.isPresent();
-    }
-
-
 }

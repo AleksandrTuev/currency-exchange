@@ -1,5 +1,6 @@
 package com.dev.model.dao;
 
+import com.dev.exception.DataBaseConnectionException;
 import com.dev.model.entity.Currency;
 import com.dev.exception.DaoException;
 import com.dev.util.DataBaseUtil;
@@ -60,7 +61,7 @@ public class CurrenciesDao {
         return INSTANCE;
     }
 
-    public List<Currency> findAll() {
+    public List<Currency> findAll() throws DaoException {
         try (Connection connection = DataBaseUtil.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(FIND_ALL_SQL)) {
             List<Currency> currencies = new ArrayList<>();
@@ -71,12 +72,12 @@ public class CurrenciesDao {
                         resultSet.getString(PARAMETER_FULL_NAME), resultSet.getString(PARAMETER_SIGN)));
             }
             return currencies;
-        } catch (SQLException e) {
-            throw new DaoException(e);
+        } catch (SQLException | DataBaseConnectionException e) {
+            throw new DaoException("cannot open DB connection", e);
         }
     }
 
-    public Optional<Currency> findByCode(String currencyCode) {
+    public Optional<Currency> findByCode(String currencyCode) throws DaoException {
         try (Connection connection = DataBaseUtil.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(FIND_BY_CODE_SQL)) {
             preparedStatement.setString(1, currencyCode);
@@ -88,8 +89,8 @@ public class CurrenciesDao {
             } else {
                 return Optional.empty();
             }
-        } catch (SQLException e) {
-            throw new DaoException(e);
+        } catch (SQLException | DataBaseConnectionException e) {
+            throw new DaoException("cannot open DB connection", e);
         }
     }
 
@@ -106,7 +107,7 @@ public class CurrenciesDao {
         }
     }
 
-    public Currency save(Currency currency) {
+    public int save(Currency currency) throws DaoException {
         try (Connection connection = DataBaseUtil.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(SAVE_SQL, Statement.RETURN_GENERATED_KEYS);) {
             preparedStatement.setString(1, currency.getCode());
@@ -115,12 +116,10 @@ public class CurrenciesDao {
             preparedStatement.executeUpdate();
 
             ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
-            if (generatedKeys.next()) {
-                currency.setId(generatedKeys.getInt(1));
-            }
-            return currency;
-        } catch (SQLException e) {
-            throw new DaoException(e);
+            return generatedKeys.getInt(1);
+
+        } catch (SQLException | DataBaseConnectionException e) {
+            throw new DaoException("cannot open DB connection", e);
         }
     }
 
