@@ -2,6 +2,7 @@ package com.dev.service;
 
 import com.dev.dto.CurrencyDto;
 import com.dev.dto.ExchangeRatesDto;
+import com.dev.exception.CurrencyNotFoundException;
 import com.dev.exception.DaoException;
 import com.dev.exception.DataAccessException;
 import com.dev.exception.ExchangeRateException;
@@ -19,17 +20,19 @@ public class ExchangeRatesService {
     private static final ExchangeRatesService INSTANCE = new ExchangeRatesService();
 //    private static final Logger log = LoggerFactory.getLogger(ExchangeRatesService.class);
 
-    private ExchangeRatesService() {}
-    
+    private ExchangeRatesService() {
+    }
+
     public static ExchangeRatesService getInstance() {
         return INSTANCE;
     }
 
-    public ExchangeRatesDto saveExchangeRates(CurrencyDto currencyBaseDto, CurrencyDto currencyTargetDto,
-                                              String rate) {
+    public ExchangeRatesDto saveExchangeRates(
+            CurrencyDto currencyBaseDto, CurrencyDto currencyTargetDto, String rate) throws ExchangeRateException,
+            CurrencyNotFoundException, DataAccessException {
         try {
             BigDecimal rateBigDecimal = new BigDecimal(rate).setScale(6, BigDecimal.ROUND_CEILING);
-            if (ExchangeRatesDAO.getInstance().findByIds(currencyBaseDto.getId(),currencyTargetDto.getId()).isPresent()) {
+            if (ExchangeRatesDAO.getInstance().findByIds(currencyBaseDto.getId(), currencyTargetDto.getId()).isPresent()) {
                 throw new ExchangeRateException("exchange rate already exists");
             }
             int id = ExchangeRatesDAO.getInstance().save(currencyBaseDto.getId(), currencyTargetDto.getId(), rateBigDecimal);
@@ -39,7 +42,7 @@ public class ExchangeRatesService {
         }
     }
 
-    public List<ExchangeRatesDto> getExchangeRates() {
+    public List<ExchangeRatesDto> getExchangeRates() throws DataAccessException {
         try {
             List<ExchangeRate> list = ExchangeRatesDAO.getInstance().findAll();
             return list.stream()
@@ -50,12 +53,19 @@ public class ExchangeRatesService {
         }
     }
 
-    public ExchangeRatesDto getExchangeRate(String baseCurrencyCode, String targetCurrencyCode) {
-        int baseCurrencyId = CurrenciesDao.getInstance().findByCode(baseCurrencyCode).orElse(null).getId();
-        int targetCurrencyId = CurrenciesDao.getInstance().findByCode(targetCurrencyCode).orElse(null).getId();
-        //TODO сделать проверку что если одна из валют NULL выкидывать исключение
-        ExchangeRate exchangeRate = ExchangeRatesDAO.getInstance().findByIds(baseCurrencyId, targetCurrencyId).orElse(null);
-        //TODO сделать проверку exchangeRate на null
+    public ExchangeRatesDto getExchangeRate(
+            String baseCurrencyCode, String targetCurrencyCode) throws CurrencyNotFoundException, DataAccessException,
+            ExchangeRateException {
+        Currency baseCurrency = CurrenciesDao.getInstance().findByCode(baseCurrencyCode).orElseThrow(
+                () -> new CurrencyNotFoundException(baseCurrencyCode));
+        Currency targetCurrency = CurrenciesDao.getInstance().findByCode(targetCurrencyCode).orElseThrow(
+                () -> new CurrencyNotFoundException(targetCurrencyCode));
+
+        int baseCurrencyId = baseCurrency.getId();
+        int targetCurrencyId = targetCurrency.getId();
+
+        ExchangeRate exchangeRate = ExchangeRatesDAO.getInstance().findByIds(baseCurrencyId, targetCurrencyId)
+                .orElseThrow(() -> new ExchangeRateException("exchange rate not found"));
         return exchangeRate.toDto();
     }
 

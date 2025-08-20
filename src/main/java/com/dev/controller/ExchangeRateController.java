@@ -1,6 +1,10 @@
 package com.dev.controller;
 
 import com.dev.dto.ExchangeRatesDto;
+import com.dev.exception.CurrencyNotFoundException;
+import com.dev.exception.DataAccessException;
+import com.dev.exception.ExchangeRateException;
+import com.dev.exception.ValidationException;
 import com.dev.service.ExchangeRatesService;
 import com.dev.util.ProjectConstants;
 import com.dev.util.ValidationUtil;
@@ -29,31 +33,37 @@ public class ExchangeRateController extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        //Получение конкретного обменного курса. Валютная пара задаётся идущими подряд кодами валют в адресе запроса
-        String stringRequestCurrencyPair = req.getPathInfo();
+        try {
+            String stringRequestCurrencyPair = req.getPathInfo();
+            if (!ValidationUtil.isCurrencyPairValid(stringRequestCurrencyPair)) {
+                throw new ValidationException("invalid parameters");
+            }
 
-        if (!ValidationUtil.isCurrencyPairValid(stringRequestCurrencyPair)) {
+            String baseCurrencyCode = stringRequestCurrencyPair.substring(INDEX_FIRST_LETTER_BASE_CURRENCY_CODE,
+                    INDEX_LAST_LETTER_BASE_CURRENCY_CODE).toUpperCase();
+            String targetCurrencyCode = stringRequestCurrencyPair.substring(INDEX_FIRST_LETTER_TARGET_CURRENCY_CODE,
+                    INDEX_LAST_LETTER_TARGET_CURRENCY_CODE).toUpperCase();
+
+            ExchangeRatesDto exchangeRatesDto = ExchangeRatesService.getInstance().getExchangeRate(baseCurrencyCode, targetCurrencyCode);
+
+            resp.setStatus(HttpServletResponse.SC_OK);
+            resp.setContentType("application/json");
+            resp.setCharacterEncoding("UTF-8");
+            resp.getWriter().write(new Gson().toJson(exchangeRatesDto));
+
+        } catch (ValidationException e) {
             resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            resp.getWriter().write("{\"error\": \"Invalid exchange rate\"}");
-            return;
+            resp.getWriter().write("error: invalid exchange rate");
+        } catch (CurrencyNotFoundException e) {
+            resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            resp.getWriter().write("error: currency " + e.getMessage() + " not found");
+        } catch (ExchangeRateException e) {
+            resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            resp.getWriter().write(e.getMessage());
+        } catch (DataAccessException e) {
+            resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            resp.getWriter().write(e.getMessage());
         }
-
-        String baseCurrencyCode = stringRequestCurrencyPair.substring(INDEX_FIRST_LETTER_BASE_CURRENCY_CODE,
-                INDEX_LAST_LETTER_BASE_CURRENCY_CODE).toUpperCase();
-        String targetCurrencyCode = stringRequestCurrencyPair.substring(INDEX_FIRST_LETTER_TARGET_CURRENCY_CODE,
-                INDEX_LAST_LETTER_TARGET_CURRENCY_CODE).toUpperCase();
-
-        ExchangeRatesDto exchangeRatesDto = ExchangeRatesService.getInstance().getExchangeRate(baseCurrencyCode, targetCurrencyCode);
-        //TODO выкидывать исключение если такой пары нет
-        //TODO выкидывать исключение если даже одной валюты нет
-
-        resp.setStatus(HttpServletResponse.SC_OK);
-        resp.setContentType("application/json");
-        resp.setCharacterEncoding("UTF-8");
-        resp.getWriter().write(new Gson().toJson(exchangeRatesDto));
-
-        int a = 123;
-
     }
 
     @Override
