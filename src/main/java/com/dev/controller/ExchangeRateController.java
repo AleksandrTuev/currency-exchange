@@ -68,43 +68,46 @@ public class ExchangeRateController extends HttpServlet {
 
     @Override
     protected void doPatch(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        //PATCH /exchangeRate/USDRUB #
-        //Обновление существующего в базе обменного курса. Валютная пара задаётся идущими подряд кодами валют в адресе
-        // запроса. Данные передаются в теле запроса в виде полей формы (x-www-form-urlencoded). Единственное
-        // поле формы - rate.
-        String tmp = req.getReader().readLine();
-        String parameterRate = tmp.substring(INDEX_FIRST_LETTER_PARAMETER_RATE);
-        //TODO не видит входной параметр
+        try {
+            String tmp = req.getReader().readLine();
+            String parameterRate = tmp.substring(INDEX_FIRST_LETTER_PARAMETER_RATE);
 
-        if (!ValidationUtil.validateParameterRate(parameterRate)) {
+            if (!ValidationUtil.validateParameterRate(parameterRate)) {
+                throw new ValidationException("invalid rate parameters");
+            }
+
+            BigDecimal rate = new BigDecimal(parameterRate);
+            String stringRequestCurrencyPair = req.getPathInfo();
+
+            if (!ValidationUtil.isCurrencyPairValid(stringRequestCurrencyPair)) {
+                throw new ValidationException("invalid exchange rate");
+            }
+
+            String baseCurrencyCode = stringRequestCurrencyPair.substring(INDEX_FIRST_LETTER_BASE_CURRENCY_CODE,
+                    INDEX_LAST_LETTER_BASE_CURRENCY_CODE).toUpperCase();
+            String targetCurrencyCode = stringRequestCurrencyPair.substring(INDEX_FIRST_LETTER_TARGET_CURRENCY_CODE,
+                    INDEX_LAST_LETTER_TARGET_CURRENCY_CODE).toUpperCase();
+
+            ExchangeRatesDto exchangeRatesDto = ExchangeRatesService.getInstance().updateExchangeRate(baseCurrencyCode,
+                    targetCurrencyCode, rate);
+
+            resp.setStatus(HttpServletResponse.SC_OK);
+            resp.setContentType("application/json");
+            resp.setCharacterEncoding("UTF-8");
+            resp.getWriter().write(new Gson().toJson(exchangeRatesDto));
+
+        } catch (ValidationException e) {
             resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            resp.getWriter().write("{\"error\": \"Invalid parameters\"}");
-            return;
+            resp.getWriter().write("error: " + e.getMessage());
+        } catch (CurrencyNotFoundException e) {
+            resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            resp.getWriter().write("error: currency " + e.getMessage() + " not found");
+        } catch (ExchangeRateException e) {
+            resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            resp.getWriter().write(e.getMessage());
+        } catch (DataAccessException e) {
+            resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            resp.getWriter().write(e.getMessage());
         }
-
-        BigDecimal rate = new BigDecimal(parameterRate);
-        String stringRequestCurrencyPair = req.getPathInfo();
-
-        if (!ValidationUtil.isCurrencyPairValid(stringRequestCurrencyPair)) {
-            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            resp.getWriter().write("{\"error\": \"Invalid exchange rate\"}");
-            return;
-        }
-
-        String baseCurrencyCode = stringRequestCurrencyPair.substring(INDEX_FIRST_LETTER_BASE_CURRENCY_CODE,
-                INDEX_LAST_LETTER_BASE_CURRENCY_CODE).toUpperCase();
-        String targetCurrencyCode = stringRequestCurrencyPair.substring(INDEX_FIRST_LETTER_TARGET_CURRENCY_CODE,
-                INDEX_LAST_LETTER_TARGET_CURRENCY_CODE).toUpperCase();
-
-        ExchangeRatesDto exchangeRatesDto = ExchangeRatesService.getInstance().updateExchangeRate(baseCurrencyCode,
-                targetCurrencyCode, rate);
-        //TODO выкидывать исключение если такой пары нет
-        //TODO выкидывать исключение если даже одной валюты нет
-
-        resp.setStatus(HttpServletResponse.SC_OK);
-        resp.setContentType("application/json");
-        resp.setCharacterEncoding("UTF-8");
-        resp.getWriter().write(new Gson().toJson(exchangeRatesDto));
-
     }
 }

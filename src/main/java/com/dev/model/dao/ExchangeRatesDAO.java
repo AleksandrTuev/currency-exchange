@@ -145,7 +145,6 @@ public class ExchangeRatesDAO {
             preparedStatement.setInt(2, baseCurrencyId);
             preparedStatement.setInt(3, targetCurrencyId);
             preparedStatement.executeUpdate();
-//            //TODO выкинуть исключение когда нет пары
         } catch (SQLException e) {
             throw new DaoException(e);
         }
