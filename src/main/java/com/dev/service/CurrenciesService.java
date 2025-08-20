@@ -2,22 +2,16 @@ package com.dev.service;
 
 import com.dev.dto.CurrencyDto;
 import com.dev.exception.CurrencyNotFoundException;
+import com.dev.exception.DaoException;
+import com.dev.exception.DataAccessException;
 import com.dev.model.dao.CurrenciesDao;
 import com.dev.model.entity.Currency;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 public class CurrenciesService {
     private static final CurrenciesService INSTANCE = new CurrenciesService();
-    /*
-    * Singleton стоит использовать для:
-        Service классы (если они stateless)
-    *
-    * Что значит "stateless"?
-        Класс не хранит изменяемое состояние (т.е. нет полей, которые могут быть модифицированы после создания).
-    * Все данные передаются через параметры методов.*/
 
     private CurrenciesService() {
     }
@@ -26,24 +20,34 @@ public class CurrenciesService {
         return INSTANCE;
     }
 
-    public List<CurrencyDto> getCurrencies() {
-        List<Currency> listCurrencies = CurrenciesDao.getInstance().findAll();
-        List<CurrencyDto> listCurrenciesDto = listCurrencies.stream()
-                .map(currency -> new CurrencyDto(
-                        currency.getId(),
-                        currency.getCode(),
-                        currency.getFullName(),
-                        currency.getSign()
-                ))
-                .toList();
-        return listCurrenciesDto;
+    public List<CurrencyDto> getCurrencies() throws DataAccessException, CurrencyNotFoundException {
+        try {
+            List<Currency> listCurrencies = CurrenciesDao.getInstance().findAll();
+            if (listCurrencies.isEmpty()) {
+                throw new CurrencyNotFoundException("currencies not found");
+            }
+
+            return listCurrencies.stream()
+                    .map(currency -> new CurrencyDto(
+                            currency.getId(),
+                            currency.getCode(),
+                            currency.getFullName(),
+                            currency.getSign()
+                    ))
+                    .toList();
+        } catch (DaoException e) {
+            throw new DataAccessException("cannot get list currencies", e);
+        }
     }
 
-    public CurrencyDto getCurrencyByCode(String code) {
-        Currency currency = CurrenciesDao.getInstance().findByCode(code).orElseThrow(
-                () -> new CurrencyNotFoundException(code)
-        );
-        return currency.toDto();
+    public CurrencyDto getCurrencyByCode(String code) throws CurrencyNotFoundException, DataAccessException {
+        try {
+            Currency currency = CurrenciesDao.getInstance().findByCode(code).orElseThrow(
+                    () -> new CurrencyNotFoundException(code));
+            return currency.toDto();
+        } catch (DaoException e) {
+            throw new DataAccessException("cannot get currency", e);
+        }
     }
 
     public CurrencyDto saveCurrency(CurrencyDto currencyDto) {
