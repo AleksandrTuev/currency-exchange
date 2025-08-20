@@ -1,6 +1,8 @@
 package com.dev.controller;
 
 import com.dev.dto.CurrencyDto;
+import com.dev.exception.CurrencyNotFoundException;
+import com.dev.exception.DataAccessException;
 import com.dev.model.entity.Currency;
 import com.dev.service.CurrenciesService;
 import com.dev.util.ValidationUtil;
@@ -12,32 +14,25 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
+import static com.dev.util.ProjectConstants.*;
+
 @WebServlet("/currencies")
 public class CurrenciesController extends BaseController {
     //TODO либо сделать единый базовый класс, либо убрать
-    private static final String PARAMETER_CODE = "code";
-    private static final String PARAMETER_NAME = "name";
-    private static final String PARAMETER_SIGN = "sign";
-
-    //Взаимодействует с: CurrenciesService, ValidationUtil
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        List<CurrencyDto> list = CurrenciesService.getInstance().getCurrencies();
+        try {
+            List<CurrencyDto> list = CurrenciesService.getInstance().getCurrencies();
 
-        if (list.isEmpty()) {
-            //вернёт страницу с ошибкой 404
-            resp.sendError(HttpServletResponse.SC_NOT_FOUND);
-            //установлен http статус
-            //тело ответа разблокировано для заполнения
-//            resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
-            return;
+            resp.setStatus(HttpServletResponse.SC_OK);
+            resp.setContentType("application/json");
+            resp.setCharacterEncoding("UTF-8");
+            resp.getWriter().write(new Gson().toJson(list));
+        } catch (DataAccessException | CurrencyNotFoundException e) {
+            resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            resp.getWriter().write(e.getMessage());
         }
-
-        resp.setStatus(HttpServletResponse.SC_OK);
-        resp.setContentType("application/json");
-        resp.setCharacterEncoding("UTF-8");
-        resp.getWriter().write(new Gson().toJson(list));
     }
 
     @Override

@@ -61,21 +61,19 @@ public class CurrenciesDao {
     }
 
     public List<Currency> findAll() {
-        List<Currency> currencies = new ArrayList<>();
-
         try (Connection connection = DataBaseUtil.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(FIND_ALL_SQL)) {
+            List<Currency> currencies = new ArrayList<>();
             ResultSet resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()) {
                 currencies.add(new Currency(resultSet.getInt(PARAMETER_ID), resultSet.getString(PARAMETER_CODE),
                         resultSet.getString(PARAMETER_FULL_NAME), resultSet.getString(PARAMETER_SIGN)));
             }
-
+            return currencies;
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DaoException(e);
         }
-        return currencies;
     }
 
     public Optional<Currency> findByCode(String currencyCode) {
