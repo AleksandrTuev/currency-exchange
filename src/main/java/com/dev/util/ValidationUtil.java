@@ -30,8 +30,7 @@ public class ValidationUtil {
     public static void checkBigDecimalNumber(String rate) {
         checkOnNullAndEmpty(rate);
         checkOnNumbersAndPoint(rate);
-        BigDecimal rateBigDecimal = new BigDecimal(rate);
-        checkNumber(rateBigDecimal);
+        checkNumber(parseStringToBigDecimal(rate));
     }
 
     public static void checkCurrencyCode(String currencyCode) {
@@ -100,5 +99,15 @@ public class ValidationUtil {
         if (rate.signum() <= 0) {
             throw new ValidationException(String.format("%s <= 0", rate));
         }
+    }
+
+    private static BigDecimal parseStringToBigDecimal(String str) {
+        BigDecimal bigDecimal = new BigDecimal(str);
+        try {
+            new BigDecimal(str.trim());
+        } catch (NumberFormatException e) {
+            throw new ValidationException(String.format("%s is not a number", str));
+        }
+        return bigDecimal;
     }
 }
