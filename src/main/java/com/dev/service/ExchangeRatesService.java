@@ -13,6 +13,7 @@ import com.dev.model.entity.Currency;
 import com.dev.model.entity.ExchangeRate;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 
 import static com.dev.util.ProjectConstants.CURRENCY_USD;
@@ -137,8 +138,8 @@ public class ExchangeRatesService {
                         targetCurrency.getId()).orElseThrow(
                         () -> new ExchangeRateException("exchange rate not found")
                 );
-                BigDecimal rate = BigDecimal.ONE.divide(exchangeRate1.getRate()).multiply(BigDecimal.ONE.divide(
-                        exchangeRate2.getRate())).setScale(6, BigDecimal.ROUND_CEILING);
+                BigDecimal rate = BigDecimal.ONE.divide(exchangeRate1.getRate(), 10, RoundingMode.HALF_UP).multiply(BigDecimal.ONE.divide(
+                        exchangeRate2.getRate(), 10, RoundingMode.HALF_UP)).setScale(6, BigDecimal.ROUND_CEILING);
                 convertedAmount = rate.multiply(amountBigDecimal).setScale(6, BigDecimal.ROUND_CEILING);
 
                 return new ExchangeDto(baseCurrency.toDto(), targetCurrency.toDto(), rate, amountBigDecimal,

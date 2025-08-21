@@ -36,6 +36,7 @@ public class ExchangeController extends HttpServlet {
             resp.setCharacterEncoding("UTF-8");
             resp.getWriter().write(new Gson().toJson(exchangeDto));
 
+
         } catch (DataAccessException e) {
             resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             resp.getWriter().write(e.getMessage());

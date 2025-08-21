@@ -4,14 +4,14 @@ import java.math.BigDecimal;
 
 public class ExchangeRatesDto {
     private final Integer id;
-    private final CurrencyDto baseCurrencyId;
-    private final CurrencyDto targetCurrencyId;
+    private final CurrencyDto baseCurrency;
+    private final CurrencyDto targetCurrency;
     private final BigDecimal rate;
 
-    public ExchangeRatesDto(Integer id, CurrencyDto baseCurrencyId, CurrencyDto targetCurrencyId, BigDecimal rate){
+    public ExchangeRatesDto(Integer id, CurrencyDto baseCurrency, CurrencyDto targetCurrency, BigDecimal rate){
         this.id = id;
-        this.baseCurrencyId = baseCurrencyId;
-        this.targetCurrencyId = targetCurrencyId;
+        this.baseCurrency = baseCurrency;
+        this.targetCurrency = targetCurrency;
         this.rate = rate;
     }
 
@@ -19,8 +19,8 @@ public class ExchangeRatesDto {
     public String toString() {
         return "ExchangeRatesDto{" +
                "id=" + id +
-               ", baseCurrencyId=" + baseCurrencyId +
-               ", targetCurrencyId=" + targetCurrencyId +
+               ", baseCurrencyId=" + baseCurrency +
+               ", targetCurrencyId=" + targetCurrency +
                ", rate=" + rate +
                '}';
     }
