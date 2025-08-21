@@ -1,6 +1,7 @@
 package com.dev.service;
 
 import com.dev.dto.CurrencyDto;
+import com.dev.dto.ExchangeDto;
 import com.dev.dto.ExchangeRatesDto;
 import com.dev.exception.CurrencyNotFoundException;
 import com.dev.exception.DaoException;
@@ -10,15 +11,14 @@ import com.dev.model.dao.CurrenciesDao;
 import com.dev.model.dao.ExchangeRatesDAO;
 import com.dev.model.entity.Currency;
 import com.dev.model.entity.ExchangeRate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.util.List;
 
+import static com.dev.util.ProjectConstants.CURRENCY_USD;
+
 public class ExchangeRatesService {
     private static final ExchangeRatesService INSTANCE = new ExchangeRatesService();
-//    private static final Logger log = LoggerFactory.getLogger(ExchangeRatesService.class);
 
     private ExchangeRatesService() {
     }
@@ -90,6 +90,60 @@ public class ExchangeRatesService {
             ExchangeRatesDAO.getInstance().updateByIds(baseCurrencyId, targetCurrencyId, rate);
             exchangeRate.setRate(rate);
             return exchangeRate.toDto();
+        } catch (DaoException e) {
+            throw new DataAccessException("cannot get exchange rates", e);
+        }
+    }
+
+    public ExchangeDto getExchange(String from, String to, String amount) throws DataAccessException,
+            CurrencyNotFoundException, ExchangeRateException {
+        try {
+            Currency baseCurrency = CurrenciesDao.getInstance().findByCode(from).orElseThrow(
+                    () -> new CurrencyNotFoundException(from)
+            );
+            Currency targetCurrency = CurrenciesDao.getInstance().findByCode(to).orElseThrow(
+                    () -> new CurrencyNotFoundException(to)
+            );
+
+            BigDecimal amountBigDecimal = new BigDecimal(amount).setScale(6, BigDecimal.ROUND_CEILING);
+            ExchangeRate exchangeRate;
+            BigDecimal convertedAmount;
+
+            if (ExchangeRatesDAO.getInstance().findByIds(baseCurrency.getId(), targetCurrency.getId()).isPresent()) {
+                exchangeRate = ExchangeRatesDAO.getInstance().findByIds(baseCurrency.getId(), targetCurrency.getId()).get();
+                convertedAmount = exchangeRate.getRate().multiply(amountBigDecimal).setScale(
+                        6, BigDecimal.ROUND_CEILING);
+                return new ExchangeDto(baseCurrency.toDto(), targetCurrency.toDto(), exchangeRate.getRate(),
+                        amountBigDecimal, convertedAmount);
+            } else if (ExchangeRatesDAO.getInstance().findByIds(targetCurrency.getId(), baseCurrency.getId()).isPresent()) {
+                exchangeRate = ExchangeRatesDAO.getInstance().findByIds(targetCurrency.getId(), baseCurrency.getId()).get();
+                BigDecimal rate = BigDecimal.ONE.divide((exchangeRate.getRate().multiply(amountBigDecimal))).setScale(
+                        6, BigDecimal.ROUND_CEILING);
+                convertedAmount = rate.multiply(amountBigDecimal).setScale(6, BigDecimal.ROUND_CEILING);
+                return new ExchangeDto(baseCurrency.toDto(), targetCurrency.toDto(), rate, amountBigDecimal,
+                        convertedAmount);
+            } else {
+                //USD-A
+                //USD-B
+
+                Currency currencyUSD = CurrenciesDao.getInstance().findByCode(CURRENCY_USD).orElseThrow(
+                        () -> new CurrencyNotFoundException("currency not found")
+                );
+                ExchangeRate exchangeRate1 = ExchangeRatesDAO.getInstance().findByIds(currencyUSD.getId(),
+                        baseCurrency.getId()).orElseThrow(
+                        () -> new ExchangeRateException("exchange rate not found")
+                );
+                ExchangeRate exchangeRate2 = ExchangeRatesDAO.getInstance().findByIds(currencyUSD.getId(),
+                        targetCurrency.getId()).orElseThrow(
+                        () -> new ExchangeRateException("exchange rate not found")
+                );
+                BigDecimal rate = BigDecimal.ONE.divide(exchangeRate1.getRate()).multiply(BigDecimal.ONE.divide(
+                        exchangeRate2.getRate())).setScale(6, BigDecimal.ROUND_CEILING);
+                convertedAmount = rate.multiply(amountBigDecimal).setScale(6, BigDecimal.ROUND_CEILING);
+
+                return new ExchangeDto(baseCurrency.toDto(), targetCurrency.toDto(), rate, amountBigDecimal,
+                        convertedAmount);
+            }
         } catch (DaoException e) {
             throw new DataAccessException("cannot get exchange rates", e);
         }

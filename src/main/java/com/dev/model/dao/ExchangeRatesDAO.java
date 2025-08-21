@@ -1,6 +1,5 @@
 package com.dev.model.dao;
 
-import com.dev.exception.CurrencyNotFoundException;
 import com.dev.exception.DaoException;
 import com.dev.exception.DataBaseConnectionException;
 import com.dev.model.entity.Currency;
