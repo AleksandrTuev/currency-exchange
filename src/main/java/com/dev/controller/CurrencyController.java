@@ -7,7 +7,6 @@ import com.dev.exception.ValidationException;
 import com.dev.service.CurrenciesService;
 import com.dev.util.ValidationUtil;
 import com.google.gson.Gson;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,8 +18,9 @@ import static com.dev.util.ProjectConstants.INDEX_FIRST_LETTER_BASE_CURRENCY_COD
 
 @WebServlet("/currency/*")
 public class CurrencyController extends HttpServlet {
+
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         try {
             if (req.getPathInfo().substring(INDEX_FIRST_LETTER_BASE_CURRENCY_CODE).isEmpty()) {
                 throw new ValidationException("сurrency not transferred");
