@@ -1,11 +1,9 @@
 package com.dev.util;
 
 import com.dev.Main;
-import com.dev.exception.DataAccessException;
 import com.dev.exception.DataBaseConnectionException;
 
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.*;
@@ -17,9 +15,9 @@ public class DataBaseUtil {
     }
 
     public static Connection getConnection() throws DataBaseConnectionException {
-        String dbUrl = null;
-        String dbInit = null;
-        Connection connection = null;
+        String dbUrl;
+        String dbInit;
+        Connection connection;
         Properties properties = new Properties();
 
         try {

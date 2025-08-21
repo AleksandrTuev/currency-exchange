@@ -34,9 +34,7 @@ public class ExchangeRateController extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         try {
             String stringRequestCurrencyPair = req.getPathInfo();
-//            if (!ValidationUtil.checkCurrencyPair(stringRequestCurrencyPair)) {
-//                throw new ValidationException("invalid parameters");
-//            }
+
             ValidationUtil.checkCurrencyPair(stringRequestCurrencyPair);
 
             String baseCurrencyCode = stringRequestCurrencyPair.substring(INDEX_FIRST_LETTER_BASE_CURRENCY_CODE,
@@ -72,7 +70,7 @@ public class ExchangeRateController extends HttpServlet {
             String tmp = req.getReader().readLine();
             String parameterRate = tmp.substring(INDEX_FIRST_LETTER_PARAMETER_RATE);
 
-            ValidationUtil.checkRate(parameterRate);
+            ValidationUtil.checkBigDecimalNumber(parameterRate);
 
             BigDecimal rate = new BigDecimal(parameterRate);
             String stringRequestCurrencyPair = req.getPathInfo();

@@ -27,11 +27,11 @@ public class ValidationUtil {
         checkCurrencyCode(targetCurrencyCode);
     }
 
-    public static void checkRate(String rate) {
+    public static void checkBigDecimalNumber(String rate) {
         checkOnNullAndEmpty(rate);
         checkOnNumbersAndPoint(rate);
         BigDecimal rateBigDecimal = new BigDecimal(rate);
-        checkBigDecimalNumber(rateBigDecimal);
+        checkNumber(rateBigDecimal);
     }
 
     public static void checkCurrencyCode(String currencyCode) {
@@ -63,7 +63,7 @@ public class ValidationUtil {
     }
 
     private static void checkLengthValid(String str) {
-        if (str.length() > LENGTH_CODE) {
+        if (str.length() > LENGTH_SIGN) {
             throw new ValidationException(String.format("length %s is too long", str));
         }
     }
@@ -96,7 +96,7 @@ public class ValidationUtil {
         }
     }
 
-    private static void checkBigDecimalNumber(BigDecimal rate) {
+    private static void checkNumber(BigDecimal rate) {
         if (rate.signum() <= 0) {
             throw new ValidationException(String.format("%s <= 0", rate));
         }

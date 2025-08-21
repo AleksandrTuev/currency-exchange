@@ -19,10 +19,6 @@ public class CurrencyDto {
         this.sign = sign;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
     public int getId() {
         return id;
     }

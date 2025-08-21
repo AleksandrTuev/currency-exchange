@@ -11,6 +11,10 @@ public class ProjectConstants {
     public static final String PARAMETER_TARGET_CURRENCY_ID_SQL = "target_currency_id";
     public static final String PARAMETER_RATE = "rate";
     public static final String PARAMETER_ID = "id";
+    public static final String PARAMETER_FROM = "from";
+    public static final String PARAMETER_TO = "to";
+    public static final String PARAMETER_AMOUNT = "amount";
+    public static final String CURRENCY_USD = "USD";
     public static final int LENGTH_CODE = 3;
     public static final int LENGTH_SIGN = 3;
     public static final int INDEX_FIRST_LETTER_BASE_CURRENCY_CODE = 1;

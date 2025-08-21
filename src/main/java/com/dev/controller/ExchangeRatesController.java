@@ -54,7 +54,7 @@ public class ExchangeRatesController extends HttpServlet {
 
             ValidationUtil.checkCurrencyCode(baseCurrencyCode);
             ValidationUtil.checkCurrencyCode(targetCurrencyCode);
-            ValidationUtil.checkRate(rate);
+            ValidationUtil.checkBigDecimalNumber(rate);
 
             CurrencyDto currencyBaseDto = CurrenciesService.getInstance().getCurrencyByCode(baseCurrencyCode);
             CurrencyDto currencyTargetDto = CurrenciesService.getInstance().getCurrencyByCode(targetCurrencyCode);

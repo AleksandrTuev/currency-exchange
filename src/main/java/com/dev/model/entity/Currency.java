@@ -1,20 +1,12 @@
 package com.dev.model.entity;
 
-//import com.google.gson.annotations.SerializedName;
-
 import com.dev.dto.CurrencyDto;
 
 public class Currency {
-//    @SerializedName("id")
     private Integer id;
-//    @SerializedName("code")
     private String code;
-//    @SerializedName("fullName")
     private String fullName;
-//    @SerializedName("sign")
     private String sign;
-
-    public Currency() {};
 
     public Currency(Integer id, String code, String fullName, String sign) {
         this.id = id;
@@ -29,14 +21,6 @@ public class Currency {
 
     public void setCode(String code) {
         this.code = code;
-    }
-
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
-    }
-
-    public void setSign(String sign) {
-        this.sign = sign;
     }
 
     public int getId() {
