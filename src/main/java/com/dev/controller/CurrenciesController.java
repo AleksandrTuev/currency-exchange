@@ -4,11 +4,11 @@ import com.dev.dto.CurrencyDto;
 import com.dev.exception.CurrencyNotFoundException;
 import com.dev.exception.DataAccessException;
 import com.dev.exception.ValidationException;
-import com.dev.model.entity.Currency;
 import com.dev.service.CurrenciesService;
 import com.dev.util.ValidationUtil;
 import com.google.gson.Gson;
 import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -18,8 +18,7 @@ import java.util.List;
 import static com.dev.util.ProjectConstants.*;
 
 @WebServlet("/currencies")
-public class CurrenciesController extends BaseController {
-    //TODO либо сделать единый базовый класс, либо убрать
+public class CurrenciesController extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
@@ -46,9 +45,7 @@ public class CurrenciesController extends BaseController {
             String name = req.getParameter(PARAMETER_NAME).trim();
             String sign = req.getParameter(PARAMETER_SIGN).trim();
 
-            if (!ValidationUtil.validateParametersCurrency(code, name, sign)) {
-                throw new ValidationException("invalid parameters");
-            }
+            ValidationUtil.checkParametersCurrency(code, name, sign);
 
             CurrencyDto currencyDto = CurrenciesService.getInstance().saveCurrency(new CurrencyDto(code, name, sign));
             resp.setStatus(HttpServletResponse.SC_CREATED);

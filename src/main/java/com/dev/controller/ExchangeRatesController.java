@@ -14,11 +14,8 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.util.List;
 
 import static com.dev.util.ProjectConstants.*;
@@ -55,11 +52,9 @@ public class ExchangeRatesController extends HttpServlet {
             String targetCurrencyCode = req.getParameter(PARAMETER_TARGET_CURRENCY_CODE).toUpperCase();
             String rate = req.getParameter(PARAMETER_RATE);
 
-            if ((!ValidationUtil.validateParameterCode(baseCurrencyCode)) ||
-                (!ValidationUtil.validateParameterCode(targetCurrencyCode)) ||
-                (!ValidationUtil.validateParameterRate(rate))) {
-                throw new ValidationException("invalid parameters");
-            }
+            ValidationUtil.checkCurrencyCode(baseCurrencyCode);
+            ValidationUtil.checkCurrencyCode(targetCurrencyCode);
+            ValidationUtil.checkRate(rate);
 
             CurrencyDto currencyBaseDto = CurrenciesService.getInstance().getCurrencyByCode(baseCurrencyCode);
             CurrencyDto currencyTargetDto = CurrenciesService.getInstance().getCurrencyByCode(targetCurrencyCode);

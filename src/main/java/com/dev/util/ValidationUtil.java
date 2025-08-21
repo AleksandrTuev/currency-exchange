@@ -1,124 +1,104 @@
 package com.dev.util;
 
+import com.dev.exception.ValidationException;
+
 import java.math.BigDecimal;
 
 import static com.dev.util.ProjectConstants.*;
 
 public class ValidationUtil {
 
-    public static boolean validateParametersCurrency(String code, String name, String sign) {
-
-        //TODO сделать логи
-        if (!validateParameterCode(code)) {
-            return false;
-        }
-
-        if (isNullOrEmpty(name)) {
-            return false;
-        }
-
-        if (isNullOrEmpty(sign)) {
-            return false;
-        }
-
-        if (!isLengthValid(sign)) {
-            return false;
-        }
-
-        if (!isOnlyLettersAndBrackets(name)) {
-            return false;
-        }
-
-        return true;
+    public static void checkParametersCurrency(String code, String name, String sign) {
+        checkCurrencyCode(code);
+        checkCurrencyName(name);
+        checkCurrencySign(sign);
     }
 
-    public static boolean validateParameterCode(String currencyCode) {
-        if (isNullOrEmpty(currencyCode)) {
-            return false;
-        }
-
-        if (hasExactLength(currencyCode)) {
-            return false;
-        }
-
-        return !containsNonLetter(currencyCode);
-    }
-
-    private static boolean isNullOrEmpty(String str) {
-        return str.isBlank();
-    }
-
-    private static boolean hasExactLength(String str) { //имеет точную длину
-        return str.length() != LENGTH_CODE;
-    }
-
-    private static boolean isLengthValid(String str) {
-        return str.length() <= LENGTH_SIGN;
-    }
-
-    private static boolean containsNonLetter(String str) {
-        for (char c : str.toCharArray()) {
-            if (!Character.isLetter(c)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private static boolean isOnlyLettersAndBrackets(String str) {
-        for (char c : str.toCharArray()) {
-            if (!Character.isLetter(c)) {
-                if (!(c == '(' || c == ')' || c == ' ')) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-
-    private static boolean isOnlyNumbersAndPoint(String str) {
-        for (char c : str.toCharArray()) {
-            if (!Character.isDigit(c)) {
-                if (!(c == '.')) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-
-    public static boolean validateParameterRate(String rate) {
-        if (isNullOrEmpty(rate)) {
-            return false;
-        }
-
-        if (!isOnlyNumbersAndPoint(rate)) {
-            return false;
-        }
-
-        BigDecimal rateBigDecimal = new BigDecimal(rate);
-
-        return rateBigDecimal.signum() > 0;
-    }
-
-    public static boolean isCurrencyPairValid(String currencyPair) {
-        if (isNullOrEmpty(currencyPair)) {
-            return false;
-        }
-
-        if (currencyPair.length() != LENGTH_STRING_REQUEST_CURRENCY_PAIR) {
-            return false;
-        }
+    public static void checkCurrencyPair(String currencyPair) {
+        checkOnNullAndEmpty(currencyPair);
+        checkExactLength(currencyPair, LENGTH_STRING_REQUEST_CURRENCY_PAIR);
 
         String baseCurrencyCode = currencyPair.substring(INDEX_FIRST_LETTER_BASE_CURRENCY_CODE,
                 INDEX_LAST_LETTER_BASE_CURRENCY_CODE);
         String targetCurrencyCode = currencyPair.substring(INDEX_FIRST_LETTER_TARGET_CURRENCY_CODE,
                 INDEX_LAST_LETTER_TARGET_CURRENCY_CODE);
 
-        if (!validateParameterCode(baseCurrencyCode)) {
-            return false;
-        }
+        checkCurrencyCode(baseCurrencyCode);
+        checkCurrencyCode(targetCurrencyCode);
+    }
 
-        return validateParameterCode(targetCurrencyCode);
+    public static void checkRate(String rate) {
+        checkOnNullAndEmpty(rate);
+        checkOnNumbersAndPoint(rate);
+        BigDecimal rateBigDecimal = new BigDecimal(rate);
+        checkBigDecimalNumber(rateBigDecimal);
+    }
+
+    public static void checkCurrencyCode(String currencyCode) {
+        checkOnNullAndEmpty(currencyCode);
+        checkExactLength(currencyCode, LENGTH_CODE);
+        checkOnNonLetter(currencyCode);
+    }
+
+    private static void checkCurrencyName(String currencyName){
+        checkOnNullAndEmpty(currencyName);
+        checkOnLetterAndBrackets(currencyName);
+    }
+
+    private static void checkCurrencySign(String CurrencySign){
+        checkOnNullAndEmpty(CurrencySign);
+        checkLengthValid(CurrencySign);
+    }
+
+    private static void checkOnNullAndEmpty(String str) {
+        if (str.isBlank()) {
+            throw new ValidationException(String.format("%s is blank", str));
+        }
+    }
+
+    private static void checkExactLength(String str, int length) {
+        if (str.length() != length) {
+            throw new ValidationException(String.format("length %s is not %d", str, length));
+        }
+    }
+
+    private static void checkLengthValid(String str) {
+        if (str.length() > LENGTH_CODE) {
+            throw new ValidationException(String.format("length %s is too long", str));
+        }
+    }
+
+    private static void checkOnNonLetter(String str) {
+        for (char c : str.toCharArray()) {
+            if (!Character.isLetter(c)) {
+                throw new ValidationException(String.format("invalid %s", str));
+            }
+        }
+    }
+
+    private static void checkOnLetterAndBrackets(String str) {
+        for (char c : str.toCharArray()) {
+            if (!Character.isLetter(c)) {
+                if (!(c == '(' || c == ')' || c == ' ')) {
+                    throw new ValidationException(String.format("invalid %s", str));
+                }
+            }
+        }
+    }
+
+    private static void checkOnNumbersAndPoint(String str) {
+        for (char c : str.toCharArray()) {
+            if (!Character.isDigit(c)) {
+                if (!(c == '.')) {
+                    throw new ValidationException(String.format("invalid %s (\",\" -> \".\")", str));
+                }
+            }
+        }
+    }
+
+    private static void checkBigDecimalNumber(BigDecimal rate) {
+        if (rate.signum() <= 0) {
+            throw new ValidationException(String.format("%s <= 0", rate));
+        }
     }
 }

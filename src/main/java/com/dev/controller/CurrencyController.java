@@ -28,9 +28,7 @@ public class CurrencyController extends HttpServlet {
 
             String CurrencyCode = req.getPathInfo().substring(INDEX_FIRST_LETTER_BASE_CURRENCY_CODE).toUpperCase();
 
-            if (!ValidationUtil.validateParameterCode(CurrencyCode)) {
-                throw new ValidationException("invalid currency code");
-            }
+            ValidationUtil.checkCurrencyCode(CurrencyCode);
 
             CurrencyDto currencyDto = CurrenciesService.getInstance().getCurrencyByCode(CurrencyCode);
             resp.setStatus(HttpServletResponse.SC_OK);

@@ -6,7 +6,6 @@ import com.dev.exception.DataAccessException;
 import com.dev.exception.ExchangeRateException;
 import com.dev.exception.ValidationException;
 import com.dev.service.ExchangeRatesService;
-import com.dev.util.ProjectConstants;
 import com.dev.util.ValidationUtil;
 import com.google.gson.Gson;
 import jakarta.servlet.ServletException;
@@ -35,9 +34,10 @@ public class ExchangeRateController extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         try {
             String stringRequestCurrencyPair = req.getPathInfo();
-            if (!ValidationUtil.isCurrencyPairValid(stringRequestCurrencyPair)) {
-                throw new ValidationException("invalid parameters");
-            }
+//            if (!ValidationUtil.checkCurrencyPair(stringRequestCurrencyPair)) {
+//                throw new ValidationException("invalid parameters");
+//            }
+            ValidationUtil.checkCurrencyPair(stringRequestCurrencyPair);
 
             String baseCurrencyCode = stringRequestCurrencyPair.substring(INDEX_FIRST_LETTER_BASE_CURRENCY_CODE,
                     INDEX_LAST_LETTER_BASE_CURRENCY_CODE).toUpperCase();
@@ -72,16 +72,12 @@ public class ExchangeRateController extends HttpServlet {
             String tmp = req.getReader().readLine();
             String parameterRate = tmp.substring(INDEX_FIRST_LETTER_PARAMETER_RATE);
 
-            if (!ValidationUtil.validateParameterRate(parameterRate)) {
-                throw new ValidationException("invalid rate parameters");
-            }
+            ValidationUtil.checkRate(parameterRate);
 
             BigDecimal rate = new BigDecimal(parameterRate);
             String stringRequestCurrencyPair = req.getPathInfo();
 
-            if (!ValidationUtil.isCurrencyPairValid(stringRequestCurrencyPair)) {
-                throw new ValidationException("invalid exchange rate");
-            }
+            ValidationUtil.checkCurrencyPair(stringRequestCurrencyPair);
 
             String baseCurrencyCode = stringRequestCurrencyPair.substring(INDEX_FIRST_LETTER_BASE_CURRENCY_CODE,
                     INDEX_LAST_LETTER_BASE_CURRENCY_CODE).toUpperCase();
