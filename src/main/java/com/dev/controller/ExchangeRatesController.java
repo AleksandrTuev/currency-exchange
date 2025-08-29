@@ -10,7 +10,6 @@ import com.dev.service.CurrenciesService;
 import com.dev.service.ExchangeRatesService;
 import com.dev.util.JsonResponseWriter;
 import com.dev.util.ValidationUtil;
-import com.google.gson.Gson;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -32,19 +31,11 @@ public class ExchangeRatesController extends HttpServlet {
             if (list.isEmpty()) {
                 throw new ExchangeRateException("exchange rates not found");
             }
-//            resp.setStatus(HttpServletResponse.SC_OK);
-//            resp.setContentType("application/json");
-//            resp.setCharacterEncoding("UTF-8");
-//            resp.getWriter().print(new Gson().toJson(list));
             JsonResponseWriter.writeResponse(resp, HttpServletResponse.SC_OK, list);
 
         } catch (DataAccessException e) {
-//            resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-//            resp.getWriter().write(e.getMessage());
             JsonResponseWriter.writeResponse(resp, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
         } catch (ExchangeRateException e) {
-//            resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
-//            resp.getWriter().write("error: " + e.getMessage());
             JsonResponseWriter.writeResponse(resp, HttpServletResponse.SC_NOT_FOUND, e.getMessage());
         }
     }
@@ -66,27 +57,15 @@ public class ExchangeRatesController extends HttpServlet {
             ExchangeRatesDto exchangeRatesDTO = ExchangeRatesService.getInstance().saveExchangeRates(currencyBaseDto,
                     currencyTargetDto, rate);
 
-//            resp.setStatus(HttpServletResponse.SC_CREATED);
-//            resp.setContentType("application/json");
-//            resp.setCharacterEncoding("UTF-8");
-//            resp.getWriter().write(new Gson().toJson(exchangeRatesDTO));
             JsonResponseWriter.writeResponse(resp, HttpServletResponse.SC_CREATED, exchangeRatesDTO);
 
         } catch (ValidationException e) {
-//            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-//            resp.getWriter().write("error: " + e.getMessage());
             JsonResponseWriter.writeResponse(resp, HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
         } catch (CurrencyNotFoundException e) {
-//            resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
-//            resp.getWriter().write("error: currency " + e.getMessage() + " not found");
             JsonResponseWriter.writeResponse(resp, HttpServletResponse.SC_NOT_FOUND, e.getMessage());
         } catch (DataAccessException e) {
-//            resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-//            resp.getWriter().write(e.getMessage());
             JsonResponseWriter.writeResponse(resp, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
         } catch (ExchangeRateException e) {
-//            resp.setStatus(HttpServletResponse.SC_CONFLICT);
-//            resp.getWriter().write(e.getMessage());
             JsonResponseWriter.writeResponse(resp, HttpServletResponse.SC_CONFLICT, e.getMessage());
         }
     }

@@ -8,7 +8,6 @@ import com.dev.exception.ValidationException;
 import com.dev.service.ExchangeRatesService;
 import com.dev.util.JsonResponseWriter;
 import com.dev.util.ValidationUtil;
-import com.google.gson.Gson;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -43,29 +42,16 @@ public class ExchangeRateController extends HttpServlet {
             String targetCurrencyCode = stringRequestCurrencyPair.substring(INDEX_FIRST_LETTER_TARGET_CURRENCY_CODE,
                     INDEX_LAST_LETTER_TARGET_CURRENCY_CODE).toUpperCase();
 
-            ExchangeRatesDto exchangeRatesDto = ExchangeRatesService.getInstance().getExchangeRate(baseCurrencyCode, targetCurrencyCode);
+            ExchangeRatesDto exchangeRatesDto = ExchangeRatesService.getInstance().getExchangeRate(baseCurrencyCode,
+                    targetCurrencyCode);
 
-//            resp.setStatus(HttpServletResponse.SC_OK);
-//            resp.setContentType("application/json");
-//            resp.setCharacterEncoding("UTF-8");
-//            resp.getWriter().write(new Gson().toJson(exchangeRatesDto));
             JsonResponseWriter.writeResponse(resp, HttpServletResponse.SC_OK, exchangeRatesDto);
 
         } catch (ValidationException e) {
-//            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-//            resp.getWriter().write("error: invalid exchange rate");
             JsonResponseWriter.writeResponse(resp, HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
         } catch (CurrencyNotFoundException | ExchangeRateException e) {
-//            resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
-//            resp.getWriter().write("error: currency " + e.getMessage() + " not found");
             JsonResponseWriter.writeResponse(resp, HttpServletResponse.SC_NOT_FOUND, e.getMessage());
-//        } catch (ExchangeRateException e) {
-//            resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
-//            resp.getWriter().write(e.getMessage());
-//            JsonResponseWriter.writeResponse(resp, HttpServletResponse.SC_NOT_FOUND, e.getMessage());
         } catch (DataAccessException e) {
-//            resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-//            resp.getWriter().write(e.getMessage());
             JsonResponseWriter.writeResponse(resp, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
@@ -91,27 +77,13 @@ public class ExchangeRateController extends HttpServlet {
             ExchangeRatesDto exchangeRatesDto = ExchangeRatesService.getInstance().updateExchangeRate(baseCurrencyCode,
                     targetCurrencyCode, rate);
 
-//            resp.setStatus(HttpServletResponse.SC_OK);
-//            resp.setContentType("application/json");
-//            resp.setCharacterEncoding("UTF-8");
-//            resp.getWriter().write(new Gson().toJson(exchangeRatesDto));
             JsonResponseWriter.writeResponse(resp, HttpServletResponse.SC_OK, exchangeRatesDto);
 
         } catch (ValidationException e) {
-//            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-//            resp.getWriter().write("error: " + e.getMessage());
             JsonResponseWriter.writeResponse(resp, HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
         } catch (CurrencyNotFoundException | ExchangeRateException e) {
-//            resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
-//            resp.getWriter().write("error: currency " + e.getMessage() + " not found");
             JsonResponseWriter.writeResponse(resp, HttpServletResponse.SC_NOT_FOUND, e.getMessage());
-//        } catch (ExchangeRateException e) {
-//            resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
-//            resp.getWriter().write(e.getMessage());
-//            JsonResponseWriter.writeResponse(resp, HttpServletResponse.SC_NOT_FOUND, e.getMessage());
         } catch (DataAccessException e) {
-//            resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-//            resp.getWriter().write(e.getMessage());
             JsonResponseWriter.writeResponse(resp, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }

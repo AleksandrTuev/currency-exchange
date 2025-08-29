@@ -14,6 +14,5 @@ public class JsonResponseWriter {
         resp.setContentType("application/json");
         resp.setCharacterEncoding("UTF-8");
         resp.getWriter().write(new Gson().toJson(data));
-        int a = 123;
     }
 }
