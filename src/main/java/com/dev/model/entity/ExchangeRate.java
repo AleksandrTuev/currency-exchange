@@ -5,9 +5,9 @@ import com.dev.dto.ExchangeRatesDto;
 import java.math.BigDecimal;
 
 public class ExchangeRate {
-    private Integer id;
-    private Currency baseCurrency;
-    private Currency targetCurrency;
+    private final Integer id;
+    private final Currency baseCurrency;
+    private final Currency targetCurrency;
     private BigDecimal rate;
 
     public ExchangeRate(Integer id, Currency baseCurrency, Currency targetCurrency, BigDecimal rate) {

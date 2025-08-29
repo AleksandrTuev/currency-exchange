@@ -22,7 +22,9 @@ import static com.dev.util.ProjectConstants.*;
 @WebServlet ("/exchangeRate/*")
 public class ExchangeRateController extends HttpServlet {
     @Override
-    protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException,
+            IOException {
+
         if (request.getMethod().equals("PATCH")) {
             doPatch(request, response);
         } else {

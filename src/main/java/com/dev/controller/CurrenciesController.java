@@ -47,11 +47,16 @@ public class CurrenciesController extends HttpServlet {
             JsonResponseWriter.writeResponse(resp, HttpServletResponse.SC_CREATED, currencyDto);
 
         } catch (ValidationException e) {
-            JsonResponseWriter.writeResponse(resp, HttpServletResponse.SC_BAD_REQUEST, new ErrorResponseDto(e.getMessage()));
+            JsonResponseWriter.writeResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
+                    new ErrorResponseDto(e.getMessage()));
+
         } catch (CurrencyNotFoundException e) {
-            JsonResponseWriter.writeResponse(resp, HttpServletResponse.SC_CONFLICT, new ErrorResponseDto(e.getMessage()));
+            JsonResponseWriter.writeResponse(resp, HttpServletResponse.SC_CONFLICT,
+                    new ErrorResponseDto(e.getMessage()));
+
         } catch (DataAccessException e) {
-            JsonResponseWriter.writeResponse(resp, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, new ErrorResponseDto(e.getMessage()));
+            JsonResponseWriter.writeResponse(resp, HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                    new ErrorResponseDto(e.getMessage()));
         }
     }
 }

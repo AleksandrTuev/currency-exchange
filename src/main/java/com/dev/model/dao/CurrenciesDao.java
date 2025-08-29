@@ -10,12 +10,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static com.dev.util.ProjectConstants.*;
+
 public class CurrenciesDao {
     private static final CurrenciesDao INSTANCE = new CurrenciesDao();
-    private static final String PARAMETER_ID = "id";
-    private static final String PARAMETER_CODE = "code";
-    private static final String PARAMETER_FULL_NAME = "full_name";
-    private static final String PARAMETER_SIGN = "sign";
 
     private static final String DELETE_SQL = """
             DELETE FROM currencies
@@ -80,8 +78,10 @@ public class CurrenciesDao {
     public Optional<Currency> findByCode(String currencyCode) throws DaoException {
         try (Connection connection = DataBaseUtil.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(FIND_BY_CODE_SQL)) {
+
             preparedStatement.setString(1, currencyCode);
             ResultSet resultSet = preparedStatement.executeQuery();
+
             if (resultSet.next()) {
                 return Optional.of(new Currency(resultSet.getInt(PARAMETER_ID),
                         resultSet.getString(PARAMETER_CODE), resultSet.getString(PARAMETER_FULL_NAME),
@@ -96,7 +96,9 @@ public class CurrenciesDao {
 
     public int save(Currency currency) throws DaoException {
         try (Connection connection = DataBaseUtil.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(SAVE_SQL, Statement.RETURN_GENERATED_KEYS);) {
+             PreparedStatement preparedStatement = connection.prepareStatement(SAVE_SQL,
+                     Statement.RETURN_GENERATED_KEYS)) {
+
             preparedStatement.setString(1, currency.getCode());
             preparedStatement.setString(2, currency.getFullName());
             preparedStatement.setString(3, currency.getSign());

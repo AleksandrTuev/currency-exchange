@@ -57,7 +57,8 @@ public class ExchangeRatesDAO {
 
     public int save(int currencyBaseId, int currencyTargetId, BigDecimal rate) throws DaoException {
         try (Connection connection = DataBaseUtil.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(SAVE_SQL, Statement.RETURN_GENERATED_KEYS);) {
+             PreparedStatement preparedStatement = connection.prepareStatement(SAVE_SQL,
+                     Statement.RETURN_GENERATED_KEYS);) {
             preparedStatement.setInt(1, currencyBaseId);
             preparedStatement.setInt(2, currencyTargetId);
             preparedStatement.setBigDecimal(3, rate);

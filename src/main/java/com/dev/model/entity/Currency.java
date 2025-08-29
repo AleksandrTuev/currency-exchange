@@ -5,8 +5,8 @@ import com.dev.dto.CurrencyDto;
 public class Currency {
     private Integer id;
     private String code;
-    private String fullName;
-    private String sign;
+    private final String fullName;
+    private final String sign;
 
     public Currency(Integer id, String code, String fullName, String sign) {
         this.id = id;

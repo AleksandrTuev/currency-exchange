@@ -37,10 +37,12 @@ public class ExchangeRatesService {
                 throw new ExchangeRateException("the currency is duplicated");
             }
 
-            if (ExchangeRatesDAO.getInstance().findByIds(currencyBaseDto.getId(), currencyTargetDto.getId()).isPresent()) {
+            if (ExchangeRatesDAO.getInstance().findByIds(currencyBaseDto.getId(), currencyTargetDto.getId())
+                    .isPresent()) {
                 throw new ExchangeRateException("exchange rate already exists");
             }
-            int id = ExchangeRatesDAO.getInstance().save(currencyBaseDto.getId(), currencyTargetDto.getId(), rateBigDecimal);
+            int id = ExchangeRatesDAO.getInstance().save(currencyBaseDto.getId(), currencyTargetDto.getId(),
+                    rateBigDecimal);
             return new ExchangeRatesDto(id, currencyBaseDto, currencyTargetDto, rateBigDecimal);
         } catch (DaoException e) {
             throw new DataAccessException("cannot get exchange rate", e);
@@ -115,22 +117,27 @@ public class ExchangeRatesService {
             BigDecimal convertedAmount;
 
             if (ExchangeRatesDAO.getInstance().findByIds(baseCurrency.getId(), targetCurrency.getId()).isPresent()) {
-                exchangeRate = ExchangeRatesDAO.getInstance().findByIds(baseCurrency.getId(), targetCurrency.getId()).get();
+                exchangeRate = ExchangeRatesDAO.getInstance().findByIds(baseCurrency.getId(), targetCurrency.getId())
+                        .get();
+
                 convertedAmount = exchangeRate.getRate().multiply(amountBigDecimal).setScale(
                         6, BigDecimal.ROUND_CEILING);
+
                 return new ExchangeDto(baseCurrency.toDto(), targetCurrency.toDto(), exchangeRate.getRate(),
                         amountBigDecimal, convertedAmount);
-            } else if (ExchangeRatesDAO.getInstance().findByIds(targetCurrency.getId(), baseCurrency.getId()).isPresent()) {
-                exchangeRate = ExchangeRatesDAO.getInstance().findByIds(targetCurrency.getId(), baseCurrency.getId()).get();
+
+            } else if (ExchangeRatesDAO.getInstance().findByIds(targetCurrency.getId(), baseCurrency.getId())
+                    .isPresent()) {
+
+                exchangeRate = ExchangeRatesDAO.getInstance().findByIds(targetCurrency.getId(), baseCurrency.getId())
+                        .get();
+
                 BigDecimal rate = BigDecimal.ONE.divide((exchangeRate.getRate().multiply(amountBigDecimal))).setScale(
                         6, BigDecimal.ROUND_CEILING);
                 convertedAmount = rate.multiply(amountBigDecimal).setScale(6, BigDecimal.ROUND_CEILING);
                 return new ExchangeDto(baseCurrency.toDto(), targetCurrency.toDto(), rate, amountBigDecimal,
                         convertedAmount);
             } else {
-                //USD-A
-                //USD-B
-
                 Currency currencyUSD = CurrenciesDao.getInstance().findByCode(CURRENCY_USD).orElseThrow(
                         () -> new CurrencyNotFoundException("currency not found")
                 );
@@ -142,8 +149,9 @@ public class ExchangeRatesService {
                         targetCurrency.getId()).orElseThrow(
                         () -> new ExchangeRateException("exchange rate not found")
                 );
-                BigDecimal rate = BigDecimal.ONE.divide(exchangeRate1.getRate(), 10, RoundingMode.HALF_UP).multiply(BigDecimal.ONE.divide(
-                        exchangeRate2.getRate(), 10, RoundingMode.HALF_UP)).setScale(6, BigDecimal.ROUND_CEILING);
+                BigDecimal rate = BigDecimal.ONE.divide(exchangeRate1.getRate(), 10, RoundingMode.HALF_UP)
+                        .multiply(BigDecimal.ONE.divide(exchangeRate2.getRate(), 10, RoundingMode.HALF_UP))
+                        .setScale(6, BigDecimal.ROUND_CEILING);
                 convertedAmount = rate.multiply(amountBigDecimal).setScale(6, BigDecimal.ROUND_CEILING);
 
                 return new ExchangeDto(baseCurrency.toDto(), targetCurrency.toDto(), rate, amountBigDecimal,

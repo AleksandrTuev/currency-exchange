@@ -60,6 +60,7 @@ public class CurrenciesService {
             int id = CurrenciesDao.getInstance().save(currency);
             currency.setId(id);
             return currency.toDto();
+
         } catch (DaoException e) {
             throw new DataAccessException("cannot save currency", e);
         }
