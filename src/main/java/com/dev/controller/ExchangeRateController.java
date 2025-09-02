@@ -1,5 +1,6 @@
 package com.dev.controller;
 
+import com.dev.dto.ErrorResponseDto;
 import com.dev.dto.ExchangeRatesDto;
 import com.dev.exception.CurrencyNotFoundException;
 import com.dev.exception.DataAccessException;
@@ -50,11 +51,17 @@ public class ExchangeRateController extends HttpServlet {
             JsonResponseWriter.writeResponse(resp, HttpServletResponse.SC_OK, exchangeRatesDto);
 
         } catch (ValidationException e) {
-            JsonResponseWriter.writeResponse(resp, HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
+            JsonResponseWriter.writeResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
+                    new ErrorResponseDto(e.getMessage()));
+
         } catch (CurrencyNotFoundException | ExchangeRateException e) {
-            JsonResponseWriter.writeResponse(resp, HttpServletResponse.SC_NOT_FOUND, e.getMessage());
+            JsonResponseWriter.writeResponse(resp, HttpServletResponse.SC_NOT_FOUND,
+                    new ErrorResponseDto(e.getMessage()));
+
         } catch (DataAccessException e) {
-            JsonResponseWriter.writeResponse(resp, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
+            JsonResponseWriter.writeResponse(resp, HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                    new ErrorResponseDto(e.getMessage()));
+
         }
     }
 
@@ -82,11 +89,17 @@ public class ExchangeRateController extends HttpServlet {
             JsonResponseWriter.writeResponse(resp, HttpServletResponse.SC_OK, exchangeRatesDto);
 
         } catch (ValidationException e) {
-            JsonResponseWriter.writeResponse(resp, HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
+            JsonResponseWriter.writeResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
+                    new ErrorResponseDto(e.getMessage()));
+
         } catch (CurrencyNotFoundException | ExchangeRateException e) {
-            JsonResponseWriter.writeResponse(resp, HttpServletResponse.SC_NOT_FOUND, e.getMessage());
+            JsonResponseWriter.writeResponse(resp, HttpServletResponse.SC_NOT_FOUND,
+                    new ErrorResponseDto(e.getMessage()));
+
         } catch (DataAccessException e) {
-            JsonResponseWriter.writeResponse(resp, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
+            JsonResponseWriter.writeResponse(resp, HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                    new ErrorResponseDto(e.getMessage()));
+
         }
     }
 }

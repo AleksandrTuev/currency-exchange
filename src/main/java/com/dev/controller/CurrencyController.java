@@ -1,6 +1,7 @@
 package com.dev.controller;
 
 import com.dev.dto.CurrencyDto;
+import com.dev.dto.ErrorResponseDto;
 import com.dev.exception.CurrencyNotFoundException;
 import com.dev.exception.DataAccessException;
 import com.dev.exception.ValidationException;
@@ -33,11 +34,16 @@ public class CurrencyController extends HttpServlet {
             CurrencyDto currencyDto = CurrenciesService.getInstance().getCurrencyByCode(CurrencyCode);
             JsonResponseWriter.writeResponse(resp, HttpServletResponse.SC_OK, currencyDto);
         } catch (ValidationException e) {
-            JsonResponseWriter.writeResponse(resp, HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
+            JsonResponseWriter.writeResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
+                    new ErrorResponseDto(e.getMessage()));
+
         } catch (CurrencyNotFoundException e) {
-            JsonResponseWriter.writeResponse(resp, HttpServletResponse.SC_NOT_FOUND, e.getMessage());
+            JsonResponseWriter.writeResponse(resp, HttpServletResponse.SC_NOT_FOUND,
+                    new ErrorResponseDto(e.getMessage()));
+
         } catch (DataAccessException e) {
-            JsonResponseWriter.writeResponse(resp, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
+            JsonResponseWriter.writeResponse(resp, HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                    new ErrorResponseDto(e.getMessage()));
         }
     }
 }
