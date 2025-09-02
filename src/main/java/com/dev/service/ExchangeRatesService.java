@@ -31,9 +31,6 @@ public class ExchangeRatesService {
     public ExchangeRatesDto saveExchangeRates(CurrencyDto currencyBaseDto, CurrencyDto currencyTargetDto, String rate) {
         try {
             BigDecimal rateBigDecimal = new BigDecimal(rate).setScale(6, BigDecimal.ROUND_CEILING);
-            if (currencyBaseDto.getId() == currencyTargetDto.getId()) {
-                throw new ExchangeRateException("the currency is duplicated");
-            }
 
             if (ExchangeRatesDAO.getInstance().findByIds(currencyBaseDto.getId(), currencyTargetDto.getId())
                     .isPresent()) {

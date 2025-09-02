@@ -45,6 +45,8 @@ public class ExchangeRateController extends HttpServlet {
             String targetCurrencyCode = stringRequestCurrencyPair.substring(INDEX_FIRST_LETTER_TARGET_CURRENCY_CODE,
                     INDEX_LAST_LETTER_TARGET_CURRENCY_CODE).toUpperCase();
 
+            ValidationUtil.checkForDuplicationCurrency(baseCurrencyCode, targetCurrencyCode);
+
             ExchangeRatesDto exchangeRatesDto = ExchangeRatesService.getInstance().getExchangeRate(baseCurrencyCode,
                     targetCurrencyCode);
 

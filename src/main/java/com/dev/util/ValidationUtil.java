@@ -1,5 +1,6 @@
 package com.dev.util;
 
+import com.dev.exception.ExchangeRateException;
 import com.dev.exception.ValidationException;
 
 import java.math.BigDecimal;
@@ -39,6 +40,12 @@ public class ValidationUtil {
             Currency.getInstance(currencyCode);
         } catch (IllegalArgumentException e) {
             throw new ValidationException("currency code is invalid");
+        }
+    }
+
+    public static void checkForDuplicationCurrency(String currencyCode1, String currencyCode2) {
+        if (currencyCode1.equals(currencyCode2)) {
+            throw new ExchangeRateException("the currency is duplicated");
         }
     }
 

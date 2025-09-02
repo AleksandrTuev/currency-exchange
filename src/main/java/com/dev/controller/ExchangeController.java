@@ -29,6 +29,7 @@ public class ExchangeController extends HttpServlet {
 
             ValidationUtil.checkCurrencyCode(from);
             ValidationUtil.checkCurrencyCode(to);
+            ValidationUtil.checkForDuplicationCurrency(from, to);
             ValidationUtil.checkBigDecimalNumber(amount);
 
             ExchangeDto exchangeDto = ExchangeRatesService.getInstance().getExchange(from, to, amount);
