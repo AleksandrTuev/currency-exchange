@@ -3,6 +3,7 @@ package com.dev.util;
 import com.dev.exception.ValidationException;
 
 import java.math.BigDecimal;
+import java.util.Currency;
 
 import static com.dev.util.ProjectConstants.*;
 
@@ -34,9 +35,11 @@ public class ValidationUtil {
     }
 
     public static void checkCurrencyCode(String currencyCode) {
-        checkOnNullAndEmpty(currencyCode);
-        checkExactLength(currencyCode, LENGTH_CODE);
-        checkOnNonLetter(currencyCode);
+        try {
+            Currency.getInstance(currencyCode);
+        } catch (IllegalArgumentException e) {
+            throw new ValidationException("currency code is invalid");
+        }
     }
 
     private static void checkCurrencyName(String currencyName){
@@ -64,14 +67,6 @@ public class ValidationUtil {
     private static void checkLengthValid(String str) {
         if (str.length() > LENGTH_SIGN) {
             throw new ValidationException(String.format("length %s is too long", str));
-        }
-    }
-
-    private static void checkOnNonLetter(String str) {
-        for (char c : str.toCharArray()) {
-            if (!Character.isLetter(c)) {
-                throw new ValidationException(String.format("invalid %s", str));
-            }
         }
     }
 
