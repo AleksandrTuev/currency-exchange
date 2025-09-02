@@ -57,10 +57,8 @@ public class ExchangeRatesService {
 
     public ExchangeRatesDto getExchangeRate(String baseCurrencyCode, String targetCurrencyCode) {
         try {
-            Currency baseCurrency = CurrenciesDao.getInstance().findByCode(baseCurrencyCode).orElseThrow(
-                    () -> new CurrencyNotFoundException(baseCurrencyCode));
-            Currency targetCurrency = CurrenciesDao.getInstance().findByCode(targetCurrencyCode).orElseThrow(
-                    () -> new CurrencyNotFoundException(targetCurrencyCode));
+            Currency baseCurrency = findCurrencyByCode(baseCurrencyCode);
+            Currency targetCurrency = findCurrencyByCode(targetCurrencyCode);
 
             int baseCurrencyId = baseCurrency.getId();
             int targetCurrencyId = targetCurrency.getId();
@@ -75,10 +73,8 @@ public class ExchangeRatesService {
 
     public ExchangeRatesDto updateExchangeRate(String baseCurrencyCode, String targetCurrencyCode, BigDecimal rate) {
         try {
-            Currency baseCurrency = CurrenciesDao.getInstance().findByCode(baseCurrencyCode).orElseThrow(
-                    () -> new CurrencyNotFoundException(baseCurrencyCode));
-            Currency targetCurrency = CurrenciesDao.getInstance().findByCode(targetCurrencyCode).orElseThrow(
-                    () -> new CurrencyNotFoundException(targetCurrencyCode));
+            Currency baseCurrency = findCurrencyByCode(baseCurrencyCode);
+            Currency targetCurrency = findCurrencyByCode(targetCurrencyCode);
 
             int baseCurrencyId = baseCurrency.getId();
             int targetCurrencyId = targetCurrency.getId();
@@ -95,12 +91,8 @@ public class ExchangeRatesService {
 
     public ExchangeDto getExchange(String from, String to, String amount) {
         try {
-            Currency baseCurrency = CurrenciesDao.getInstance().findByCode(from).orElseThrow(
-                    () -> new CurrencyNotFoundException(from)
-            );
-            Currency targetCurrency = CurrenciesDao.getInstance().findByCode(to).orElseThrow(
-                    () -> new CurrencyNotFoundException(to)
-            );
+            Currency baseCurrency = findCurrencyByCode(from);
+            Currency targetCurrency = findCurrencyByCode(to);
 
             BigDecimal amountBigDecimal = new BigDecimal(amount).setScale(6, BigDecimal.ROUND_CEILING);
             ExchangeRate exchangeRate;
@@ -150,5 +142,10 @@ public class ExchangeRatesService {
         } catch (DaoException e) {
             throw new DataAccessException("cannot get exchange rates", e);
         }
+    }
+
+    private Currency findCurrencyByCode(String currencyCode) {
+        return CurrenciesDao.getInstance().findByCode(currencyCode).orElseThrow(
+                () -> new CurrencyNotFoundException(String.format("%s currency not found", currencyCode)));
     }
 }
