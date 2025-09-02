@@ -59,7 +59,7 @@ public class CurrenciesDao {
         return INSTANCE;
     }
 
-    public List<Currency> findAll() throws DaoException {
+    public List<Currency> findAll() {
         try (Connection connection = DataBaseUtil.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(FIND_ALL_SQL)) {
             List<Currency> currencies = new ArrayList<>();
@@ -75,7 +75,7 @@ public class CurrenciesDao {
         }
     }
 
-    public Optional<Currency> findByCode(String currencyCode) throws DaoException {
+    public Optional<Currency> findByCode(String currencyCode) {
         try (Connection connection = DataBaseUtil.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(FIND_BY_CODE_SQL)) {
 
@@ -94,7 +94,7 @@ public class CurrenciesDao {
         }
     }
 
-    public int save(Currency currency) throws DaoException {
+    public int save(Currency currency) {
         try (Connection connection = DataBaseUtil.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(SAVE_SQL,
                      Statement.RETURN_GENERATED_KEYS)) {

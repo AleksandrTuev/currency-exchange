@@ -28,9 +28,7 @@ public class ExchangeRatesService {
         return INSTANCE;
     }
 
-    public ExchangeRatesDto saveExchangeRates(
-            CurrencyDto currencyBaseDto, CurrencyDto currencyTargetDto, String rate) throws ExchangeRateException,
-            CurrencyNotFoundException, DataAccessException {
+    public ExchangeRatesDto saveExchangeRates(CurrencyDto currencyBaseDto, CurrencyDto currencyTargetDto, String rate) {
         try {
             BigDecimal rateBigDecimal = new BigDecimal(rate).setScale(6, BigDecimal.ROUND_CEILING);
             if (currencyBaseDto.getId() == currencyTargetDto.getId()) {
@@ -49,7 +47,7 @@ public class ExchangeRatesService {
         }
     }
 
-    public List<ExchangeRatesDto> getExchangeRates() throws DataAccessException {
+    public List<ExchangeRatesDto> getExchangeRates() {
         try {
             List<ExchangeRate> list = ExchangeRatesDAO.getInstance().findAll();
             return list.stream()
@@ -60,9 +58,7 @@ public class ExchangeRatesService {
         }
     }
 
-    public ExchangeRatesDto getExchangeRate(
-            String baseCurrencyCode, String targetCurrencyCode) throws CurrencyNotFoundException, DataAccessException,
-            ExchangeRateException {
+    public ExchangeRatesDto getExchangeRate(String baseCurrencyCode, String targetCurrencyCode) {
         try {
             Currency baseCurrency = CurrenciesDao.getInstance().findByCode(baseCurrencyCode).orElseThrow(
                     () -> new CurrencyNotFoundException(baseCurrencyCode));
@@ -80,9 +76,7 @@ public class ExchangeRatesService {
         }
     }
 
-    public ExchangeRatesDto updateExchangeRate(
-            String baseCurrencyCode, String targetCurrencyCode, BigDecimal rate) throws CurrencyNotFoundException,
-            DataAccessException, ExchangeRateException {
+    public ExchangeRatesDto updateExchangeRate(String baseCurrencyCode, String targetCurrencyCode, BigDecimal rate) {
         try {
             Currency baseCurrency = CurrenciesDao.getInstance().findByCode(baseCurrencyCode).orElseThrow(
                     () -> new CurrencyNotFoundException(baseCurrencyCode));
@@ -102,8 +96,7 @@ public class ExchangeRatesService {
         }
     }
 
-    public ExchangeDto getExchange(String from, String to, String amount) throws DataAccessException,
-            CurrencyNotFoundException, ExchangeRateException {
+    public ExchangeDto getExchange(String from, String to, String amount) {
         try {
             Currency baseCurrency = CurrenciesDao.getInstance().findByCode(from).orElseThrow(
                     () -> new CurrencyNotFoundException(from)

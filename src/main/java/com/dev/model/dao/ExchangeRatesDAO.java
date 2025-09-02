@@ -55,7 +55,7 @@ public class ExchangeRatesDAO {
         return INSTANCE;
     }
 
-    public int save(int currencyBaseId, int currencyTargetId, BigDecimal rate) throws DaoException {
+    public int save(int currencyBaseId, int currencyTargetId, BigDecimal rate) {
         try (Connection connection = DataBaseUtil.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(SAVE_SQL,
                      Statement.RETURN_GENERATED_KEYS);) {
@@ -71,7 +71,7 @@ public class ExchangeRatesDAO {
         }
     }
 
-    public List<ExchangeRate> findAll() throws DaoException {
+    public List<ExchangeRate> findAll() {
         List<ExchangeRate> exchangeRates = new ArrayList<>();
 
         try (Connection connection = DataBaseUtil.getConnection();
@@ -95,7 +95,7 @@ public class ExchangeRatesDAO {
         return exchangeRates;
     }
 
-    private Currency getCurrencyById(Connection connection, int currencyId) throws DaoException {
+    private Currency getCurrencyById(Connection connection, int currencyId) {
         try (PreparedStatement preparedStatement = connection.prepareStatement(FIND_BY_ID_SQL)) {
             preparedStatement.setInt(1, currencyId);
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -110,7 +110,7 @@ public class ExchangeRatesDAO {
         }
     }
 
-    public Optional<ExchangeRate> findByIds(int baseCurrencyId, int targetCurrencyId) throws DaoException {
+    public Optional<ExchangeRate> findByIds(int baseCurrencyId, int targetCurrencyId) {
         try (Connection connection = DataBaseUtil.getConnection();
         PreparedStatement preparedStatement = connection.prepareStatement(FIND_BY_IDS_SQL)) {
             ExchangeRate exchangeRate = null;
@@ -137,7 +137,7 @@ public class ExchangeRatesDAO {
         }
     }
 
-    public void updateByIds(int baseCurrencyId, int targetCurrencyId, BigDecimal rate) throws DaoException {
+    public void updateByIds(int baseCurrencyId, int targetCurrencyId, BigDecimal rate) {
         try (Connection connection = DataBaseUtil.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_BY_IDS_SQL)) {
 

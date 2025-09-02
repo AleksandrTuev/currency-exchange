@@ -20,7 +20,7 @@ public class CurrenciesService {
         return INSTANCE;
     }
 
-    public List<CurrencyDto> getCurrencies() throws DataAccessException, CurrencyNotFoundException {
+    public List<CurrencyDto> getCurrencies() {
         try {
             List<Currency> listCurrencies = CurrenciesDao.getInstance().findAll();
             if (listCurrencies.isEmpty()) {
@@ -40,7 +40,7 @@ public class CurrenciesService {
         }
     }
 
-    public CurrencyDto getCurrencyByCode(String code) throws CurrencyNotFoundException, DataAccessException {
+    public CurrencyDto getCurrencyByCode(String code) {
         try {
             Currency currency = CurrenciesDao.getInstance().findByCode(code).orElseThrow(
                     () -> new CurrencyNotFoundException(code));
@@ -50,7 +50,7 @@ public class CurrenciesService {
         }
     }
 
-    public CurrencyDto saveCurrency(CurrencyDto currencyDto) throws DataAccessException, CurrencyException {
+    public CurrencyDto saveCurrency(CurrencyDto currencyDto) {
         try {
             if (CurrenciesDao.getInstance().findByCode(currencyDto.getCode()).isPresent()) {
                 throw new CurrencyException("currency already exist");
