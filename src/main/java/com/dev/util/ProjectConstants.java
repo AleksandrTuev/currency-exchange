@@ -15,7 +15,6 @@ public class ProjectConstants {
     public static final String PARAMETER_TO = "to";
     public static final String PARAMETER_AMOUNT = "amount";
     public static final String CURRENCY_USD = "USD";
-    public static final int LENGTH_CODE = 3;
     public static final int LENGTH_SIGN = 3;
     public static final int INDEX_FIRST_LETTER_BASE_CURRENCY_CODE = 1;
     public static final int INDEX_LAST_LETTER_BASE_CURRENCY_CODE = 4;

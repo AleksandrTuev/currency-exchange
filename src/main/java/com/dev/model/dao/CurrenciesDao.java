@@ -14,26 +14,12 @@ import static com.dev.util.ProjectConstants.*;
 
 public class CurrenciesDao {
     private static final CurrenciesDao INSTANCE = new CurrenciesDao();
-
-    private static final String DELETE_SQL = """
-            DELETE FROM currencies
-            WHERE id = ?
-            """;
     private static final String SAVE_SQL = """
             INSERT INTO currencies (code,
                                     full_name,
                                     sign)
             VALUES (?, ?, ?)
             """;
-
-    private static final String UPDATE_SQL = """
-            UPDATE currencies
-            SET code = ?,
-                full_name = ?,
-                sign = ?
-            WHERE id = ?
-            """;
-
     private static final String FIND_BY_CODE_SQL = """
             SELECT id,
                    code,
@@ -42,7 +28,6 @@ public class CurrenciesDao {
             FROM currencies
             WHERE code = ?
             """;
-
     private static final String FIND_ALL_SQL = """
             SELECT id,
                    code,
@@ -50,7 +35,6 @@ public class CurrenciesDao {
                    sign
             FROM currencies
             """;
-
 
     private CurrenciesDao() {
     }

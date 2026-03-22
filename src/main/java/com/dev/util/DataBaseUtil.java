@@ -1,6 +1,7 @@
 package com.dev.util;
 
 import com.dev.exception.DataBaseConnectionException;
+import com.sun.tools.javac.Main;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -23,7 +24,7 @@ public class DataBaseUtil {
             //Метод Class.getResourceAsStream() позволяет загружать ресурсы (например, файлы) из classpath
             // (пути к классам) в виде потока (InputStream). Это особенно полезно, когда файлы находятся внутри
             // JAR-архива или в папке resources проекта (например, в Maven/Gradle)
-            InputStream fis = Main.class.getResourceAsStream("/application.properties");
+            InputStream fis = Object.class.getResourceAsStream("/application.properties");
             properties.load(fis);
             dbUrl = properties.getProperty("db.host");
 
