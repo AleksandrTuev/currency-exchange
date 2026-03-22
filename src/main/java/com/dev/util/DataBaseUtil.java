@@ -1,6 +1,5 @@
 package com.dev.util;
 
-import com.dev.Main;
 import com.dev.exception.DataBaseConnectionException;
 
 import java.io.*;
